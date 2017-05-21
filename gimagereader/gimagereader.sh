@@ -7,6 +7,8 @@ $SCRIPT_DIR/../qt/qt.sh
 exitOnError
 $SCRIPT_DIR/../qtspell/qtspell.sh
 exitOnError
+$SCRIPT_DIR/../poppler/podofo.sh
+exitOnError
 $SCRIPT_DIR/../poppler/poppler.sh
 exitOnError
 $SCRIPT_DIR/../twaindsm/twaindsm.sh
@@ -17,7 +19,6 @@ fi
 
 #必要ライブラリ
 pacman -S --needed --noconfirm \
-$MINGW_PACKAGE_PREFIX-podofo \
 $MINGW_PACKAGE_PREFIX-dlfcn
 
 }
