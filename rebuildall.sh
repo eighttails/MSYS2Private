@@ -1,5 +1,5 @@
 #!/bin/bash
-rm -rf /$MINGW_PREFIX/local
+rm -rf $MINGW_PREFIX/local
 
 ./ffmpeg/ffmpeg.sh
 
