@@ -52,7 +52,7 @@ cmake .. \
 -DCMAKE_VERBOSE_MAKEFILE:BOOL=FALSE \
 -DINTERFACE_TYPE=qt5
 
-makeParallel && makeParallel install
+make && makeParallel install
 exitOnError
 popd
 popd
