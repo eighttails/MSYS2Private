@@ -76,7 +76,7 @@ else
 fi
 
 #共通ビルドオプション
-QT_COMMON_CONFIGURE_OPTION='-opensource -confirm-license -silent -platform win32-g++ -optimize-size -no-pch -no-direct2d -no-fontconfig -qt-zlib -qt-libjpeg -qt-libpng -qt-freetype -qt-pcre -qt-harfbuzz -nomake tests QMAKE_CXXFLAGS+=-Wno-deprecated-declarations'
+QT_COMMON_CONFIGURE_OPTION='-opensource -confirm-license -silent -platform win32-g++ -pkg-config -optimize-size -no-pch -no-direct2d -no-fontconfig -qt-zlib -qt-libjpeg -qt-libpng -qt-freetype -qt-pcre -qt-harfbuzz -nomake tests QMAKE_CXXFLAGS+=-Wno-deprecated-declarations'
 }
 
 function buildQtShared(){
@@ -220,6 +220,8 @@ rm -rf $QTINSTALLERFW_BUILD
 SCRIPT_DIR=$(dirname $(readlink -f ${BASH_SOURCE:-$0}))
 source $SCRIPT_DIR/../common/common.sh
 commonSetup
+
+export PKG_CONFIG="$(cygpath -am $MINGW_PREFIX/bin/pkg-config.exe)"
 
 #Qtのインストール場所
 QT5_SHARED_PREFIX=$PREFIX/qt5-shared
