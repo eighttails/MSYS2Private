@@ -67,7 +67,6 @@ mkdir $MINGW_PREFIX 2> /dev/null
 
 #ツール類
 pacman -S --needed --noconfirm \
-base \
 base-devel \
 VCS \
 unzip \
