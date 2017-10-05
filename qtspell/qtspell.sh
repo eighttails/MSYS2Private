@@ -19,7 +19,7 @@ echo "QtSpell is already installed."
 exit 0
 fi
 
-QTSPELL_VERSION=0.8.2
+QTSPELL_VERSION=master
 QTSPELL_TAG=$QTSPELL_VERSION
 QTSPELL_ARCHIVE=qtspell-$QTSPELL_TAG.tar.gz
 QTSPELL_SRC_DIR=qtspell-$QTSPELL_VERSION
