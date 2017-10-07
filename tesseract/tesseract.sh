@@ -3,12 +3,13 @@
 function prerequisite(){
 #他スクリプト依存関係
 if [ $((NO_DEPENDENCY)) == 0 ]; then
-$SCRIPT_DIR/../leptonica/leptonica.sh
+#依存スクリプトなし
 exitOnError
 fi
 
 #必要ライブラリ
 pacman -S --needed --noconfirm \
+$MINGW_PACKAGE_PREFIX-leptonica \
 $MINGW_PACKAGE_PREFIX-libpng \
 $MINGW_PACKAGE_PREFIX-libjpeg \
 $MINGW_PACKAGE_PREFIX-libtiff \
