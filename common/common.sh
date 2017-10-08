@@ -64,6 +64,8 @@ function toolchain(){
 #基本ツールチェーン
 #ディレクトリが存在しない場合があるので作っておく
 mkdir $MINGW_PREFIX 2> /dev/null
+mkdir $MINGW_PREFIX/include 2> /dev/null
+mkdir $MINGW_PREFIX/lib 2> /dev/null
 
 #ツール類
 pacman -S --needed --noconfirm \
