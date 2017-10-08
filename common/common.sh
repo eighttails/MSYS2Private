@@ -64,8 +64,6 @@ function toolchain(){
 #基本ツールチェーン
 #ディレクトリが存在しない場合があるので作っておく
 mkdir $MINGW_PREFIX 2> /dev/null
-mkdir $MINGW_PREFIX/include 2> /dev/null
-mkdir $MINGW_PREFIX/lib 2> /dev/null
 
 #ツール類
 pacman -S --needed --noconfirm \
@@ -115,6 +113,8 @@ export EXTLIB=~/extlib
 #インストール先(/mingw32/localまたは/mingw64/local)
 export PREFIX=$MINGW_PREFIX/local
 mkdir -p $PREFIX/bin 2> /dev/null
+mkdir -p $PREFIX/include 2> /dev/null
+mkdir -p $PREFIX/lib 2> /dev/null
 
 export PATH=$PREFIX/bin:$PATH
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
