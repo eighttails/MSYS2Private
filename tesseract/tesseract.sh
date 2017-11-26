@@ -26,7 +26,7 @@ exit 0
 fi
 
 #TESSERACT_VERSION=4.00.00alpha
-TESSERACT_SRC_DIR=tesseract-$MINGW_CHOST
+TESSERACT_SRC_DIR=tesseract-$BIT
 
 if [ ! -e  $TESSERACT_SRC_DIR ]; then
 git clone https://github.com/tesseract-ocr/tesseract.git $TESSERACT_SRC_DIR
@@ -45,6 +45,7 @@ exitOnError
 export LIBLEPT_HEADERSDIR=$PREFIX/include/leptonica
 
 ./configure \
+--enable-debug \
 --build=$MINGW_CHOST \
 --host=$MINGW_CHOST \
 --target=$MINGW_CHOST \

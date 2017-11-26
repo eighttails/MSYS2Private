@@ -15,7 +15,7 @@ popd
 function makeQtSourceTree(){
 #Qt
 QT_MAJOR_VERSION=5.9
-QT_MINOR_VERSION=.1
+QT_MINOR_VERSION=.3
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
 QT_ARCHIVE_DIR=qt-everywhere-opensource-src-$QT_VERSION
 QT_ARCHIVE=$QT_ARCHIVE_DIR.tar.xz
@@ -90,12 +90,12 @@ makeQtSourceTree shared
 exitOnError
 
 #shared版
-QT5_SHARED_BUILD=qt5-shared-$MINGW_CHOST
+QT5_SHARED_BUILD=qt5-shared-$BIT
 rm -rf $QT5_SHARED_BUILD
 mkdir $QT5_SHARED_BUILD
 pushd $QT5_SHARED_BUILD
 
-../$QT_SOURCE_DIR/configure -prefix "$(cygpath -am $PREFIX)" -shared -headerdir "$(cygpath -am $QT5_SHARED_PREFIX/include)" -libdir "$(cygpath -am $QT5_SHARED_PREFIX/lib)" $QT_COMMON_CONFIGURE_OPTION &> ../qt5-shared-$MINGW_CHOST-config.status
+../$QT_SOURCE_DIR/configure -prefix "$(cygpath -am $PREFIX)" -shared -headerdir "$(cygpath -am $QT5_SHARED_PREFIX/include)" -libdir "$(cygpath -am $QT5_SHARED_PREFIX/lib)" $QT_COMMON_CONFIGURE_OPTION &> ../qt5-shared-$BIT-config.status
 exitOnError
 
 makeParallel && makeParallel install && makeParallel docs && makeParallel install_qch_docs
@@ -115,12 +115,12 @@ makeQtSourceTree static
 exitOnError
 
 #static版
-QT5_STATIC_BUILD=qt5-static-$MINGW_CHOST
+QT5_STATIC_BUILD=qt5-static-$BIT
 rm -rf $QT5_STATIC_BUILD
 mkdir $QT5_STATIC_BUILD
 pushd $QT5_STATIC_BUILD
 
-../$QT_SOURCE_DIR/configure -prefix "$(cygpath -am $QT5_STATIC_PREFIX)" -static -static-runtime -nomake examples $QT_COMMON_CONFIGURE_OPTION &> ../qt5-static-$MINGW_CHOST-config.status
+../$QT_SOURCE_DIR/configure -prefix "$(cygpath -am $QT5_STATIC_PREFIX)" -static -static-runtime -nomake examples $QT_COMMON_CONFIGURE_OPTION &> ../qt5-static-$BIT-config.status
 exitOnError
 
 makeParallel && makeParallel install
@@ -163,7 +163,7 @@ else
 	popd
 fi
 
-QTCREATOR_BUILD=qt-creator-$MINGW_CHOST
+QTCREATOR_BUILD=qt-creator-$BIT
 rm -rf $QTCREATOR_BUILD
 mkdir $QTCREATOR_BUILD
 pushd $QTCREATOR_BUILD
@@ -185,10 +185,10 @@ fi
 
 #Qt Installer Framework
 cd ~/extlib
-QTI_MAJOR_VER=2.0
-QTI_MINOR_VER=.5-1
+QTI_MAJOR_VER=3.0
+QTI_MINOR_VER=.2
 QTI_VER=$QTI_MAJOR_VER$QTI_MINOR_VER
-QTI_SOURCE_DIR=qt-installer-framework-opensource-$QTI_VER-src
+QTI_SOURCE_DIR=qt-installer-framework-opensource-src-$QTI_VER
 QTI_ARCHIVE=$QTI_SOURCE_DIR.zip
 #QTI_RELEASE=development_releases
 QTI_RELEASE=official_releases
@@ -201,7 +201,7 @@ else
 	unzip -q $QTI_ARCHIVE
 fi
 
-QTINSTALLERFW_BUILD=qt-installer-fw-$MINGW_CHOST
+QTINSTALLERFW_BUILD=qt-installer-fw-$BIT
 rm -rf $QTINSTALLERFW_BUILD
 mkdir $QTINSTALLERFW_BUILD
 pushd $QTINSTALLERFW_BUILD
