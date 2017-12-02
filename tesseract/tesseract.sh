@@ -3,12 +3,13 @@
 function prerequisite(){
 #他スクリプト依存関係
 if [ $((NO_DEPENDENCY)) == 0 ]; then
-$SCRIPT_DIR/../leptonica/leptonica.sh
+#依存スクリプトなし
 exitOnError
 fi
 
 #必要ライブラリ
 pacman -S --needed --noconfirm \
+$MINGW_PACKAGE_PREFIX-leptonica \
 $MINGW_PACKAGE_PREFIX-libpng \
 $MINGW_PACKAGE_PREFIX-libjpeg \
 $MINGW_PACKAGE_PREFIX-libtiff \
@@ -25,7 +26,7 @@ exit 0
 fi
 
 #TESSERACT_VERSION=4.00.00alpha
-TESSERACT_SRC_DIR=tesseract-$MINGW_CHOST
+TESSERACT_SRC_DIR=tesseract-$BIT
 
 if [ ! -e  $TESSERACT_SRC_DIR ]; then
 git clone https://github.com/tesseract-ocr/tesseract.git $TESSERACT_SRC_DIR
@@ -44,6 +45,7 @@ exitOnError
 export LIBLEPT_HEADERSDIR=$PREFIX/include/leptonica
 
 ./configure \
+--enable-debug \
 --build=$MINGW_CHOST \
 --host=$MINGW_CHOST \
 --target=$MINGW_CHOST \
