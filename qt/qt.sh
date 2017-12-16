@@ -76,7 +76,25 @@ else
 fi
 
 #共通ビルドオプション
-QT_COMMON_CONFIGURE_OPTION='-opensource -confirm-license -silent -platform win32-g++ -pkg-config -optimize-size -no-pch -no-direct2d -no-fontconfig -qt-zlib -qt-libjpeg -qt-libpng -qt-freetype -qt-pcre -qt-harfbuzz -nomake tests QMAKE_CXXFLAGS+=-Wno-deprecated-declarations'
+QT_COMMON_CONF_OPTS=()
+QT_COMMON_CONF_OPTS+=("-opensource")
+QT_COMMON_CONF_OPTS+=("-confirm-license")
+QT_COMMON_CONF_OPTS+=("-silent")
+QT_COMMON_CONF_OPTS+=("-platform" "win32-g++")
+QT_COMMON_CONF_OPTS+=("-pkg-config")
+QT_COMMON_CONF_OPTS+=("-optimize-size")
+QT_COMMON_CONF_OPTS+=("-no-pch")
+QT_COMMON_CONF_OPTS+=("QMAKE_CXXFLAGS+=-Wno-deprecated-declarations")
+QT_COMMON_CONF_OPTS+=("-no-ssse3")
+QT_COMMON_CONF_OPTS+=("-no-direct2d")
+QT_COMMON_CONF_OPTS+=("-no-fontconfig")
+QT_COMMON_CONF_OPTS+=("-qt-zlib")
+QT_COMMON_CONF_OPTS+=("-qt-libjpeg")
+QT_COMMON_CONF_OPTS+=("-qt-libpng")
+QT_COMMON_CONF_OPTS+=("-qt-freetype")
+QT_COMMON_CONF_OPTS+=("-qt-pcre")
+QT_COMMON_CONF_OPTS+=("-qt-harfbuzz")
+QT_COMMON_CONF_OPTS+=("-nomake" "tests")
 }
 
 function buildQtShared(){
@@ -95,7 +113,13 @@ rm -rf $QT5_SHARED_BUILD
 mkdir $QT5_SHARED_BUILD
 pushd $QT5_SHARED_BUILD
 
-../$QT_SOURCE_DIR/configure -prefix "$(cygpath -am $PREFIX)" -shared -headerdir "$(cygpath -am $QT5_SHARED_PREFIX/include)" -libdir "$(cygpath -am $QT5_SHARED_PREFIX/lib)" $QT_COMMON_CONFIGURE_OPTION &> ../qt5-shared-$BIT-config.status
+QT_SHARED_CONF_OPTS=()
+QT_SHARED_CONF_OPTS+=("-prefix" "$(cygpath -am $PREFIX)")
+QT_SHARED_CONF_OPTS+=("-shared")
+QT_SHARED_CONF_OPTS+=("-headerdir" "$(cygpath -am $QT5_SHARED_PREFIX/include)")
+QT_SHARED_CONF_OPTS+=("-libdir" "$(cygpath -am $QT5_SHARED_PREFIX/lib)")
+
+../$QT_SOURCE_DIR/configure "${QT_COMMON_CONF_OPTS[@]}" "${QT_SHARED_CONF_OPTS[@]}" &> ../qt5-shared-$BIT-config.status
 exitOnError
 
 makeParallel && makeParallel install && makeParallel docs && makeParallel install_qch_docs
@@ -120,7 +144,14 @@ rm -rf $QT5_STATIC_BUILD
 mkdir $QT5_STATIC_BUILD
 pushd $QT5_STATIC_BUILD
 
-../$QT_SOURCE_DIR/configure -prefix "$(cygpath -am $QT5_STATIC_PREFIX)" -static -static-runtime -nomake examples $QT_COMMON_CONFIGURE_OPTION &> ../qt5-static-$BIT-config.status
+QT_STATIC_CONF_OPTS=()
+QT_STATIC_CONF_OPTS+=("-prefix" "$(cygpath -am $QT5_STATIC_PREFIX)")
+QT_STATIC_CONF_OPTS+=("-static")
+QT_STATIC_CONF_OPTS+=("-static-runtime")
+QT_STATIC_CONF_OPTS+=("-nomake" "examples")
+QT_STATIC_CONF_OPTS+=("-D" "JAS_DLL=0")
+
+../$QT_SOURCE_DIR/configure "${QT_COMMON_CONF_OPTS[@]}" "${QT_STATIC_CONF_OPTS[@]}" &> ../qt5-static-$BIT-config.status
 exitOnError
 
 makeParallel && makeParallel install
