@@ -3,7 +3,8 @@
 function prerequisite(){
 #必要ライブラリ
 pacman -S --needed --noconfirm \
-$MINGW_PACKAGE_PREFIX-SDL2
+$MINGW_PACKAGE_PREFIX-SDL2 \
+$MINGW_PACKAGE_PREFIX-libopenssl 
 
 mkdir -p $PREFIX/bin 2> /dev/null
 mkdir -p $QT5_STATIC_PREFIX/bin 2> /dev/null
@@ -88,6 +89,7 @@ QT_COMMON_CONF_OPTS+=("QMAKE_CXXFLAGS+=-Wno-deprecated-declarations")
 QT_COMMON_CONF_OPTS+=("-no-ssse3")
 QT_COMMON_CONF_OPTS+=("-no-direct2d")
 QT_COMMON_CONF_OPTS+=("-no-fontconfig")
+QT_STATIC_CONF_OPTS+=("-no-dbus")
 QT_COMMON_CONF_OPTS+=("-qt-zlib")
 QT_COMMON_CONF_OPTS+=("-qt-libjpeg")
 QT_COMMON_CONF_OPTS+=("-qt-libpng")
@@ -150,6 +152,9 @@ QT_STATIC_CONF_OPTS+=("-static")
 QT_STATIC_CONF_OPTS+=("-static-runtime")
 QT_STATIC_CONF_OPTS+=("-nomake" "examples")
 QT_STATIC_CONF_OPTS+=("-D" "JAS_DLL=0")
+QT_STATIC_CONF_OPTS+=("-openssl-linked")
+
+export OPENSSL_LIBS="-lssl -lcrypto -lcrypt32 -lgdi32"
 
 ../$QT_SOURCE_DIR/configure "${QT_COMMON_CONF_OPTS[@]}" "${QT_STATIC_CONF_OPTS[@]}" &> ../qt5-static-$BIT-config.status
 exitOnError
