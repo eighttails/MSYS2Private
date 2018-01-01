@@ -4,7 +4,7 @@ function prerequisite(){
 #必要ライブラリ
 pacman -S --needed --noconfirm \
 $MINGW_PACKAGE_PREFIX-SDL2 \
-$MINGW_PACKAGE_PREFIX-libopenssl 
+$MINGW_PACKAGE_PREFIX-openssl 
 
 mkdir -p $PREFIX/bin 2> /dev/null
 mkdir -p $QT5_STATIC_PREFIX/bin 2> /dev/null
@@ -36,7 +36,7 @@ else
 	tar xf $QT_ARCHIVE
 	mv $QT_ARCHIVE_DIR $QT_SOURCE_DIR
 	pushd $QT_SOURCE_DIR
-	
+
 	if [ "$1" == "static" ]; then
 		#static版がcmakeで正常にリンクできない対策のパッチ
 		patch -p1 -i $SCRIPT_DIR/0034-qt-5.3.2-Use-QMAKE_PREFIX_STATICLIB-in-create_cmake-prf.patch
@@ -82,14 +82,13 @@ QT_COMMON_CONF_OPTS+=("-opensource")
 QT_COMMON_CONF_OPTS+=("-confirm-license")
 QT_COMMON_CONF_OPTS+=("-silent")
 QT_COMMON_CONF_OPTS+=("-platform" "win32-g++")
-QT_COMMON_CONF_OPTS+=("-pkg-config")
 QT_COMMON_CONF_OPTS+=("-optimize-size")
+QT_COMMON_CONF_OPTS+=("-pkg-config")
 QT_COMMON_CONF_OPTS+=("-no-pch")
 QT_COMMON_CONF_OPTS+=("QMAKE_CXXFLAGS+=-Wno-deprecated-declarations")
 QT_COMMON_CONF_OPTS+=("-no-ssse3")
 QT_COMMON_CONF_OPTS+=("-no-direct2d")
 QT_COMMON_CONF_OPTS+=("-no-fontconfig")
-QT_STATIC_CONF_OPTS+=("-no-dbus")
 QT_COMMON_CONF_OPTS+=("-qt-zlib")
 QT_COMMON_CONF_OPTS+=("-qt-libjpeg")
 QT_COMMON_CONF_OPTS+=("-qt-libpng")
@@ -120,6 +119,7 @@ QT_SHARED_CONF_OPTS+=("-prefix" "$(cygpath -am $PREFIX)")
 QT_SHARED_CONF_OPTS+=("-shared")
 QT_SHARED_CONF_OPTS+=("-headerdir" "$(cygpath -am $QT5_SHARED_PREFIX/include)")
 QT_SHARED_CONF_OPTS+=("-libdir" "$(cygpath -am $QT5_SHARED_PREFIX/lib)")
+
 
 ../$QT_SOURCE_DIR/configure "${QT_COMMON_CONF_OPTS[@]}" "${QT_SHARED_CONF_OPTS[@]}" &> ../qt5-shared-$BIT-config.status
 exitOnError
@@ -153,6 +153,7 @@ QT_STATIC_CONF_OPTS+=("-static-runtime")
 QT_STATIC_CONF_OPTS+=("-nomake" "examples")
 QT_STATIC_CONF_OPTS+=("-D" "JAS_DLL=0")
 QT_STATIC_CONF_OPTS+=("-openssl-linked")
+QT_STATIC_CONF_OPTS+=("-no-dbus")
 
 export OPENSSL_LIBS="-lssl -lcrypto -lcrypt32 -lgdi32"
 
