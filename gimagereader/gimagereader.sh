@@ -54,6 +54,7 @@ cmake .. \
 
 make && makeParallel install
 exitOnError
+cp -r  ../packaging/win32/skel/share/icons $PREFIX/share/
 popd
 popd
 }
