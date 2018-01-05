@@ -1,0 +1,13 @@
+diff --git a/ccmain/tesseractclass.cpp b/ccmain/tesseractclass.cpp
+index 17140ccb..9ff7bbfe 100644
+--- a/ccmain/tesseractclass.cpp
++++ b/ccmain/tesseractclass.cpp
+@@ -503,7 +503,7 @@ Tesseract::Tesseract()
+           this->params()),
+       INT_MEMBER(tessedit_parallelize, 0, "Run in parallel where possible",
+                  this->params()),
+-      BOOL_MEMBER(preserve_interword_spaces, false,
++      BOOL_MEMBER(preserve_interword_spaces, true,
+                   "Preserve multiple interword spaces", this->params()),
+       STRING_MEMBER(page_separator, "\f",
+                     "Page separator (default is form feed control character)",
