@@ -124,7 +124,7 @@ QT_SHARED_CONF_OPTS+=("-libdir" "$(cygpath -am $QT5_SHARED_PREFIX/lib)")
 ../$QT_SOURCE_DIR/configure "${QT_COMMON_CONF_OPTS[@]}" "${QT_SHARED_CONF_OPTS[@]}" &> ../qt5-shared-$BIT-config.status
 exitOnError
 
-makeParallel && makeParallel install && makeParallel docs && makeParallel install_qch_docs
+makeParallel && make install && makeParallel docs && make install_qch_docs
 exitOnError
 popd
 rm -rf $QT5_SHARED_BUILD
@@ -160,7 +160,7 @@ export OPENSSL_LIBS="-lssl -lcrypto -lcrypt32 -lgdi32"
 ../$QT_SOURCE_DIR/configure "${QT_COMMON_CONF_OPTS[@]}" "${QT_STATIC_CONF_OPTS[@]}" &> ../qt5-static-$BIT-config.status
 exitOnError
 
-makeParallel && makeParallel install
+makeParallel && make install
 exitOnError
 
 #MSYS2のlibtiffはliblzmaに依存しているためリンクを追加する
@@ -208,7 +208,7 @@ pushd $QTCREATOR_BUILD
 $PREFIX/bin/qmake CONFIG-=precompile_header CONFIG+="release silent" QTC_PREFIX="$(cygpath -am $PREFIX)" ../$QTC_SOURCE_DIR/qtcreator.pro
 exitOnError
 
-makeParallel && makeParallel install
+makeParallel && make install
 exitOnError
 popd
 rm -rf $QTCREATOR_BUILD
@@ -246,7 +246,7 @@ pushd $QTINSTALLERFW_BUILD
 $QT5_STATIC_PREFIX/bin/qmake CONFIG+="release silent" CONFIG-=precompile_header ../$QTI_SOURCE_DIR/installerfw.pro
 exitOnError
 
-makeParallel && makeParallel install
+makeParallel && make install
 exitOnError
 popd
 rm -rf $QTINSTALLERFW_BUILD
