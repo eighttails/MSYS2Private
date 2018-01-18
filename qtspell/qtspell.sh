@@ -43,7 +43,7 @@ cmake .. \
 -DUSE_QT5=1 
 exitOnError
 
-makeParallel && makeParallel install
+makeParallel && make install
 exitOnError
 popd
 popd

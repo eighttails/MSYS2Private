@@ -46,7 +46,6 @@ exitOnError
 export LIBLEPT_HEADERSDIR=$PREFIX/include/leptonica
 
 ./configure \
---enable-debug \
 --build=$MINGW_CHOST \
 --host=$MINGW_CHOST \
 --target=$MINGW_CHOST \
@@ -60,9 +59,9 @@ exitOnError
 #sed -i -e "s|piccolo2d-core-3.0.jar:piccolo2d-extras-3.0.jar|'piccolo2d-core-3.0.jar;piccolo2d-extras-3.0.jar'|" java/Makefile
 #makeParallel ScrollView.jar
 #exitOnError
-makeParallel training && makeParallel training-install
+makeParallel training && make training-install
 exitOnError
-makeParallel && makeParallel install
+makeParallel && make install
 exitOnError
 popd
 }

@@ -63,7 +63,7 @@ LDFLAGS="-L$PREFIX/qt5-shared/lib"
     
 exitOnError
 
-makeParallel && makeParallel install
+makeParallel && make install
 
 exitOnError
 popd

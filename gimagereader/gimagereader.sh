@@ -56,7 +56,8 @@ cmake .. \
 -DCMAKE_VERBOSE_MAKEFILE:BOOL=FALSE \
 -DINTERFACE_TYPE=qt5
 
-make && makeParallel install
+#gImageReaderに限ってはmakeParallelするとうまくいかない
+make && make install
 exitOnError
 cp -r  ../packaging/win32/skel/share/icons $GIMAGEREADER_PREFIX/share/
 popd

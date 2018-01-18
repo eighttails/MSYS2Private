@@ -33,7 +33,7 @@ cmake .. \
 -DCMAKE_INSTALL_PREFIX=$PREFIX 
 exitOnError
 
-makeParallel && makeParallel install
+makeParallel && make install
 exitOnError
 popd
 popd
