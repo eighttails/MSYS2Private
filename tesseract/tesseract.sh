@@ -34,7 +34,6 @@ fi
 
 pushd $TESSERACT_SRC_DIR
 git pull
-patchOnce 1 $SCRIPT_DIR/preserve_interword_spaces.patch
 
 if [ -e Makefile ]; then
 make clean
