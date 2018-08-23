@@ -3,6 +3,8 @@
 function prerequisite(){
 #必要ライブラリ
 pacman -S --needed --noconfirm \
+$MINGW_PACKAGE_PREFIX-clang \
+$MINGW_PACKAGE_PREFIX-clang-tools-extra \
 $MINGW_PACKAGE_PREFIX-SDL2 \
 $MINGW_PACKAGE_PREFIX-openssl 
 
@@ -15,7 +17,7 @@ popd
 
 function makeQtSourceTree(){
 #Qt
-QT_MAJOR_VERSION=5.10
+QT_MAJOR_VERSION=5.11
 QT_MINOR_VERSION=.1
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
 QT_ARCHIVE_DIR=qt-everywhere-src-$QT_VERSION
@@ -55,6 +57,8 @@ else
 		patch -p1 -i $SCRIPT_DIR/0041-qt-5.4.0-Fix-mingw-create_cmake-prl-file-has-no-lib-prefix.patch
 		patch -p1 -i $SCRIPT_DIR/0042-qt-5.4.0-static-cmake-also-link-plugins-and-plugin-deps.patch
 		patch -p1 -i $SCRIPT_DIR/0043-qt-5.5.0-static-cmake-regex-QT_INSTALL_LIBS-in-QMAKE_PRL_LIBS_FOR_CMAKE.patch
+		patch -p1 -i $SCRIPT_DIR/0052-qt-5.11-mingw-fix-link-qdoc-with-clang.patch
+		patch -p1 -i $SCRIPT_DIR/0053-qt-5.11-documents-fix-regression.patch
 	fi
 
 	#MSYSでビルドが通らない問題への対策パッチ
@@ -96,6 +100,7 @@ QT_COMMON_CONF_OPTS+=("-qt-freetype")
 QT_COMMON_CONF_OPTS+=("-qt-pcre")
 QT_COMMON_CONF_OPTS+=("-qt-harfbuzz")
 QT_COMMON_CONF_OPTS+=("-nomake" "tests")
+QT_COMMON_CONF_OPTS+=("-skip" "qtwinextras")
 }
 
 function buildQtShared(){
@@ -179,8 +184,8 @@ fi
 
 #Qt Creator
 cd ~/extlib
-QTC_MAJOR_VER=4.6
-QTC_MINOR_VER=.1
+QTC_MAJOR_VER=4.7
+QTC_MINOR_VER=.0
 QTC_VER=$QTC_MAJOR_VER$QTC_MINOR_VER
 QTC_SOURCE_DIR=qt-creator-opensource-src-$QTC_VER
 QTC_ARCHIVE=$QTC_SOURCE_DIR.tar.xz
@@ -226,6 +231,10 @@ export PKG_CONFIG="$(cygpath -am $MINGW_PREFIX/bin/pkg-config.exe)"
 #Qtのインストール場所
 QT5_SHARED_PREFIX=$PREFIX/qt5-shared
 QT5_STATIC_PREFIX=$PREFIX/qt5-static
+
+export LLVM_INSTALL_DIR="$(cygpath -am $MINGW_PREFIX)"
+export FORCE_MINGW_QDOC_BUILD=1
+export QDOC_USE_STATIC_LIBCLANG=1
 
 #必要ライブラリ
 prerequisite
