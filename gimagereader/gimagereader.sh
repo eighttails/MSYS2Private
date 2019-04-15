@@ -5,6 +5,8 @@ function prerequisite(){
 if [ $((NO_DEPENDENCY)) == 0 ]; then
 $SCRIPT_DIR/../qt/qt.sh
 exitOnError
+$SCRIPT_DIR/../quazip/quazip.sh
+exitOnError
 $SCRIPT_DIR/../qtspell/qtspell.sh
 exitOnError
 $SCRIPT_DIR/../poppler/poppler.sh
@@ -17,18 +19,23 @@ fi
 
 #必要ライブラリ
 pacman -S --needed --noconfirm \
+$MINGW_PACKAGE_PREFIX-djvulibre \
 $MINGW_PACKAGE_PREFIX-podofo \
 $MINGW_PACKAGE_PREFIX-dlfcn
 
 }
 
 function build(){
-if [ -e $PREFIX/bin/gImageReader-qt5 -a $((FORCE_INSTALL)) == 0 ]; then
+if [ "$GIMAGEREADER_PREFIX" == "" ]; then
+GIMAGEREADER_PREFIX=$PREFIX
+fi
+
+if [ -e $GIMAGEREADER_PREFIX/bin/gImageReader-qt5 -a $((FORCE_INSTALL)) == 0 ]; then
 echo "gImageReader is already installed."
 exit 0
 fi
 
-GIMAGEREADER_VERSION=3.2.3
+GIMAGEREADER_VERSION=3.3.0
 GIMAGEREADER_TAG=v$GIMAGEREADER_VERSION
 GIMAGEREADER_ARCHIVE=gImageReader-$GIMAGEREADER_TAG.tar.gz
 GIMAGEREADER_SRC_DIR=gImageReader-$GIMAGEREADER_VERSION
@@ -47,13 +54,15 @@ pushd build
 CMAKE_PREFIX_PATH=$PREFIX/qt5-shared:$CMAKE_PREFIX_PATH \
 cmake .. \
 -G"MSYS Makefiles" \
--DCMAKE_INSTALL_PREFIX=$PREFIX \
--DCMAKE_CXX_FLAGS="-DUSE_STD_NAMESPACE -I$PREFIX/include" \
+-DCMAKE_INSTALL_PREFIX=$GIMAGEREADER_PREFIX \
+-DCMAKE_CXX_FLAGS="-I$PREFIX/include" \
 -DCMAKE_VERBOSE_MAKEFILE:BOOL=FALSE \
 -DINTERFACE_TYPE=qt5
 
-make && makeParallel install
+#gImageReaderに限ってはmakeParallelするとうまくいかない
+make && make install
 exitOnError
+cp -r  ../packaging/win32/skel/share/icons $GIMAGEREADER_PREFIX/share/
 popd
 popd
 }

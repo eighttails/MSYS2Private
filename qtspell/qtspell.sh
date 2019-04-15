@@ -19,7 +19,7 @@ echo "QtSpell is already installed."
 exit 0
 fi
 
-QTSPELL_VERSION=master
+QTSPELL_VERSION=0.8.4
 QTSPELL_TAG=$QTSPELL_VERSION
 QTSPELL_ARCHIVE=qtspell-$QTSPELL_TAG.tar.gz
 QTSPELL_SRC_DIR=qtspell-$QTSPELL_VERSION
@@ -43,7 +43,7 @@ cmake .. \
 -DUSE_QT5=1 
 exitOnError
 
-makeParallel && makeParallel install
+makeParallel && make install
 exitOnError
 popd
 popd
