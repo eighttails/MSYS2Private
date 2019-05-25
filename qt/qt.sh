@@ -3,6 +3,9 @@
 function prerequisite(){
 #必要ライブラリ
 pacman -S --needed --noconfirm \
+$MINGW_PACKAGE_PREFIX-ntldd \
+$MINGW_PACKAGE_PREFIX-clang \
+$MINGW_PACKAGE_PREFIX-clang-tools-extra \
 $MINGW_PACKAGE_PREFIX-SDL2 \
 $MINGW_PACKAGE_PREFIX-openssl 
 
@@ -15,8 +18,8 @@ popd
 
 function makeQtSourceTree(){
 #Qt
-QT_MAJOR_VERSION=5.10
-QT_MINOR_VERSION=.1
+QT_MAJOR_VERSION=5.12
+QT_MINOR_VERSION=.3
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
 QT_ARCHIVE_DIR=qt-everywhere-src-$QT_VERSION
 QT_ARCHIVE=$QT_ARCHIVE_DIR.tar.xz
@@ -56,6 +59,10 @@ else
 		patch -p1 -i $SCRIPT_DIR/0042-qt-5.4.0-static-cmake-also-link-plugins-and-plugin-deps.patch
 		patch -p1 -i $SCRIPT_DIR/0043-qt-5.5.0-static-cmake-regex-QT_INSTALL_LIBS-in-QMAKE_PRL_LIBS_FOR_CMAKE.patch
 	fi
+
+    #共通パッチ
+    patch -p1 -i $SCRIPT_DIR/0301-link-evr.patch
+    patch -p1 -i $SCRIPT_DIR/0052-qt-5.11-mingw-fix-link-qdoc-with-clang.patch
 
 	#MSYSでビルドが通らない問題への対策パッチ
 	for F in qtbase/src/angle/src/common/gles_common.pri qtdeclarative/features/hlsl_bytecode_header.prf
@@ -179,8 +186,8 @@ fi
 
 #Qt Creator
 cd ~/extlib
-QTC_MAJOR_VER=4.6
-QTC_MINOR_VER=.1
+QTC_MAJOR_VER=4.9
+QTC_MINOR_VER=.0
 QTC_VER=$QTC_MAJOR_VER$QTC_MINOR_VER
 QTC_SOURCE_DIR=qt-creator-opensource-src-$QTC_VER
 QTC_ARCHIVE=$QTC_SOURCE_DIR.tar.xz
@@ -197,6 +204,7 @@ else
 	pushd $QTC_SOURCE_DIR
 	#MSYSでビルドが通らない問題へのパッチ
 	patch -p1 < $SCRIPT_DIR/qt-creator-3.5.0-shellquote-declspec-dllexport-for-unix-shell.patch
+	patch -p1 < $SCRIPT_DIR/qt-creator-4.6.2-fix-clang-detect.patch
 	popd
 fi
 
@@ -210,6 +218,10 @@ exitOnError
 
 makeParallel && make install
 exitOnError
+
+#プラグインの依存関係(Clang)をコピー
+ntldd -R $PREFIX/lib/qtcreator/plugins/ClangTools4.dll | sed "s|\\\|/|g" | grep "$(cygpath -am $MINGW_PREFIX)/" | sed -e "s/^.*=> \(.*\) .*/\1/" | xargs -I{} cp {} $PREFIX/bin/
+
 popd
 rm -rf $QTCREATOR_BUILD
 }
@@ -222,6 +234,10 @@ source $SCRIPT_DIR/../common/common.sh
 commonSetup
 
 export PKG_CONFIG="$(cygpath -am $MINGW_PREFIX/bin/pkg-config.exe)"
+export LLVM_INSTALL_DIR=${MINGW_PREFIX}
+export FORCE_MINGW_QDOC_BUILD=1
+export QDOC_USE_STATIC_LIBCLANG=1
+export QTC_FORCE_CLANG_LIBTOOLING=1
 
 #Qtのインストール場所
 QT5_SHARED_PREFIX=$PREFIX/qt5-shared

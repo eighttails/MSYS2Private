@@ -34,12 +34,12 @@ TESSERACT_ARCHIVE=tesseract-$TESSERACT_TAG.tar.gz
 TESSERACT_SRC_DIR=tesseract-$TESSERACT_VERSION
 TESSERACT_BUILD_DIR=$TESSERACT_SRC_DIR-$BIT
 
-# if [ ! -e $TESSERACT_ARCHIVE ]; then
-# wget -c https://github.com/tesseract-ocr/tesseract/archive/$TESSERACT_TAG/$TESSERACT_ARCHIVE
-# fi
-# rm -rf $TESSERACT_SRC_DIR $TESSERACT_BUILD_DIR 
-# tar xf $TESSERACT_ARCHIVE
-# mv $TESSERACT_SRC_DIR $TESSERACT_BUILD_DIR
+if [ ! -e $TESSERACT_ARCHIVE ]; then
+wget -c https://github.com/tesseract-ocr/tesseract/archive/$TESSERACT_TAG/$TESSERACT_ARCHIVE
+fi
+rm -rf $TESSERACT_SRC_DIR $TESSERACT_BUILD_DIR 
+tar xf $TESSERACT_ARCHIVE
+mv $TESSERACT_SRC_DIR $TESSERACT_BUILD_DIR
 pushd $TESSERACT_BUILD_DIR
 
 if [ -e Makefile ]; then
