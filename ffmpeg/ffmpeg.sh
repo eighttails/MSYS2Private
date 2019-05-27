@@ -6,6 +6,8 @@ pacman -S --needed --noconfirm \
 $MINGW_PACKAGE_PREFIX-libvorbis \
 $MINGW_PACKAGE_PREFIX-libvpx \
 $MINGW_PACKAGE_PREFIX-yasm
+
+exitOnError
 }
 
 function build(){

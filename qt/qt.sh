@@ -9,6 +9,8 @@ $MINGW_PACKAGE_PREFIX-clang-tools-extra \
 $MINGW_PACKAGE_PREFIX-SDL2 \
 $MINGW_PACKAGE_PREFIX-openssl 
 
+exitOnError
+
 mkdir -p $PREFIX/bin 2> /dev/null
 mkdir -p $QT5_STATIC_PREFIX/bin 2> /dev/null
 pushd $MINGW_PREFIX/bin
@@ -93,7 +95,6 @@ QT_COMMON_CONF_OPTS+=("-optimize-size")
 QT_COMMON_CONF_OPTS+=("-pkg-config")
 QT_COMMON_CONF_OPTS+=("-no-pch")
 QT_COMMON_CONF_OPTS+=("QMAKE_CXXFLAGS+=-Wno-deprecated-declarations")
-QT_COMMON_CONF_OPTS+=("-no-ssse3")
 QT_COMMON_CONF_OPTS+=("-no-direct2d")
 QT_COMMON_CONF_OPTS+=("-no-fontconfig")
 QT_COMMON_CONF_OPTS+=("-qt-zlib")

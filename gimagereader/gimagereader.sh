@@ -23,6 +23,7 @@ $MINGW_PACKAGE_PREFIX-djvulibre \
 $MINGW_PACKAGE_PREFIX-podofo \
 $MINGW_PACKAGE_PREFIX-dlfcn
 
+exitOnError
 }
 
 function build(){

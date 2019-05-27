@@ -20,6 +20,8 @@ $MINGW_PACKAGE_PREFIX-nss \
 $MINGW_PACKAGE_PREFIX-openjpeg2 \
 $MINGW_PACKAGE_PREFIX-poppler-data \
 $MINGW_PACKAGE_PREFIX-zlib
+
+exitOnError
 }
 
 function build(){

@@ -20,6 +20,7 @@ $MINGW_PACKAGE_PREFIX-pango \
 $MINGW_PACKAGE_PREFIX-icu \
 $MINGW_PACKAGE_PREFIX-docbook-xsl
 
+exitOnError
 }
 
 function build(){

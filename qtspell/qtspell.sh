@@ -11,6 +11,7 @@ fi
 pacman -S --needed --noconfirm \
 $MINGW_PACKAGE_PREFIX-enchant
 
+exitOnError
 }
 
 function build(){
