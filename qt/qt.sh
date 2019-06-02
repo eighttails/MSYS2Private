@@ -50,11 +50,7 @@ else
 		# Patches so that qt5-static can be used with cmake.
 		patch -p1 -i $SCRIPT_DIR/0036-qt-5.3.2-win32-qt5-static-cmake-link-ws2_32-and--static.patch
 		patch -p1 -i $SCRIPT_DIR/0037-qt-5.4.0-Improve-cmake-plugin-detection-as-not-all-are-suffixed-Plugin.patch
-		
-		pushd qtbase > /dev/null
 		patch -p1 -i $SCRIPT_DIR/0038-qt-5.5.0-cmake-Rearrange-STATIC-vs-INTERFACE-targets.patch
-		popd
-		
 		patch -p1 -i $SCRIPT_DIR/0039-qt-5.4.0-Make-it-possible-to-use-static-builds-of-Qt-with-CMa.patch
 		patch -p1 -i $SCRIPT_DIR/0040-qt-5.4.0-Generate-separated-libraries-in-prl-files-for-CMake.patch
 		patch -p1 -i $SCRIPT_DIR/0041-qt-5.4.0-Fix-mingw-create_cmake-prl-file-has-no-lib-prefix.patch
@@ -76,12 +72,23 @@ else
 	done
 	sed -i -e "s|#ifdef __MINGW32__|#if 0|g"  qtbase/src/3rdparty/angle/src/libANGLE/renderer/d3d/d3d11/Query11.cpp
 
+    #32ビット版のdefファイルが間違っているのを修正
+    #Qt5.11から該当ファイルをコピー
+    #https://bugreports.qt.io/browse/QTBUG-76087
+    cp $SCRIPT_DIR/libEGL* qtbase/src/3rdparty/angle/src/libEGL/
+    cp $SCRIPT_DIR/libGLESv2* qtbase/src/3rdparty/angle/src/libGLESv2/
+
 	#64bit環境で生成されるオブジェクトファイルが巨大すぎでビルドが通らない問題へのパッチ
 	sed -i -e "s|QMAKE_CFLAGS			= |QMAKE_CFLAGS			= -Wa,-mbig-obj |g" qtbase/mkspecs/win32-g++/qmake.conf
 
 	#プリコンパイル済みヘッダーが巨大すぎでビルドが通らない問題へのパッチ
 	sed -i -e "s| precompile_header||g" qtbase/mkspecs/win32-g++/qmake.conf
 
+    # 32ビットでqdocのstaticビルドが通らないので暫定措置
+    # 64ビット版も巻き添えを食らうが割り切る
+	if [ "$1" == "static" ]; then
+        rm -rf qttools/src/qdoc
+	fi
 	popd
 fi
 
@@ -89,7 +96,7 @@ fi
 QT_COMMON_CONF_OPTS=()
 QT_COMMON_CONF_OPTS+=("-opensource")
 QT_COMMON_CONF_OPTS+=("-confirm-license")
-QT_COMMON_CONF_OPTS+=("-silent")
+# QT_COMMON_CONF_OPTS+=("-silent")
 QT_COMMON_CONF_OPTS+=("-platform" "win32-g++")
 QT_COMMON_CONF_OPTS+=("-optimize-size")
 QT_COMMON_CONF_OPTS+=("-pkg-config")
@@ -188,7 +195,7 @@ fi
 #Qt Creator
 cd ~/extlib
 QTC_MAJOR_VER=4.9
-QTC_MINOR_VER=.0
+QTC_MINOR_VER=.1
 QTC_VER=$QTC_MAJOR_VER$QTC_MINOR_VER
 QTC_SOURCE_DIR=qt-creator-opensource-src-$QTC_VER
 QTC_ARCHIVE=$QTC_SOURCE_DIR.tar.xz
@@ -237,7 +244,7 @@ commonSetup
 export PKG_CONFIG="$(cygpath -am $MINGW_PREFIX/bin/pkg-config.exe)"
 export LLVM_INSTALL_DIR=${MINGW_PREFIX}
 export FORCE_MINGW_QDOC_BUILD=1
-export QDOC_USE_STATIC_LIBCLANG=1
+# export QDOC_USE_STATIC_LIBCLANG=1
 export QTC_FORCE_CLANG_LIBTOOLING=1
 
 #Qtのインストール場所
