@@ -84,19 +84,14 @@ else
 	#プリコンパイル済みヘッダーが巨大すぎでビルドが通らない問題へのパッチ
 	sed -i -e "s| precompile_header||g" qtbase/mkspecs/win32-g++/qmake.conf
 
-    # 32ビットでqdocのstaticビルドが通らないので暫定措置
-    # 64ビット版も巻き添えを食らうが割り切る
-	if [ "$1" == "static" ]; then
-        rm -rf qttools/src/qdoc
-	fi
-	popd
+    popd
 fi
 
 #共通ビルドオプション
 QT_COMMON_CONF_OPTS=()
 QT_COMMON_CONF_OPTS+=("-opensource")
 QT_COMMON_CONF_OPTS+=("-confirm-license")
-# QT_COMMON_CONF_OPTS+=("-silent")
+QT_COMMON_CONF_OPTS+=("-silent")
 QT_COMMON_CONF_OPTS+=("-platform" "win32-g++")
 QT_COMMON_CONF_OPTS+=("-optimize-size")
 QT_COMMON_CONF_OPTS+=("-pkg-config")
@@ -162,6 +157,7 @@ mkdir $QT5_STATIC_BUILD
 pushd $QT5_STATIC_BUILD
 
 QT_STATIC_CONF_OPTS=()
+QT_STATIC_CONF_OPTS+=("-v")
 QT_STATIC_CONF_OPTS+=("-prefix" "$(cygpath -am $QT5_STATIC_PREFIX)")
 QT_STATIC_CONF_OPTS+=("-static")
 QT_STATIC_CONF_OPTS+=("-static-runtime")
@@ -169,6 +165,10 @@ QT_STATIC_CONF_OPTS+=("-nomake" "examples")
 QT_STATIC_CONF_OPTS+=("-D" "JAS_DLL=0")
 QT_STATIC_CONF_OPTS+=("-openssl-linked")
 QT_STATIC_CONF_OPTS+=("-no-dbus")
+# 32ビットでqdocのstaticビルドが通らないので暫定措置
+if [ "$BIT" == "32bit" ]; then
+QT_STATIC_CONF_OPTS+=("-skip" "qttools")
+fi
 
 export OPENSSL_LIBS="-lssl -lcrypto -lcrypt32 -lgdi32"
 
@@ -244,7 +244,11 @@ commonSetup
 export PKG_CONFIG="$(cygpath -am $MINGW_PREFIX/bin/pkg-config.exe)"
 export LLVM_INSTALL_DIR=${MINGW_PREFIX}
 export FORCE_MINGW_QDOC_BUILD=1
-# export QDOC_USE_STATIC_LIBCLANG=1
+if [ "$BIT" == "64bit" ]; then
+#64ビット版ではこの環境変数をセット
+#32ビット版では外さないとビルドが通らない
+export QDOC_USE_STATIC_LIBCLANG=1
+fi
 export QTC_FORCE_CLANG_LIBTOOLING=1
 
 #Qtのインストール場所
@@ -256,12 +260,12 @@ prerequisite
 
 cd $EXTLIB
 
-#shared版Qtをビルド
-buildQtShared
-exitOnError
-
 #static版Qtをビルド
 buildQtStatic
+exitOnError
+
+#shared版Qtをビルド
+buildQtShared
 exitOnError
 
 #QtCreatorをビルド
