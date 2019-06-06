@@ -6,7 +6,7 @@ if [ $((NO_DEPENDENCY)) == 0 ]; then
 $SCRIPT_DIR/../qt/qt.sh
 exitOnError
 fi
-	
+    
 #必要ライブラリ
 pacman -S --needed --noconfirm \
 $MINGW_PACKAGE_PREFIX-cairo \

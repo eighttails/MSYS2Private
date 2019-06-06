@@ -30,47 +30,47 @@ QT_SOURCE_DIR=qt-src-$QT_VERSION-$1
 QT_RELEASE=official_releases
 
 if [ -e $QT_SOURCE_DIR ]; then
-	# 存在する場合
-	echo "$QT_SOURCE_DIR already exists."
+    # 存在する場合
+    echo "$QT_SOURCE_DIR already exists."
 else
-	# 存在しない場合
-	if [ ! -e $QT_ARCHIVE ]; then
-	wget -c  http://download.qt.io/$QT_RELEASE/qt/$QT_MAJOR_VERSION/$QT_VERSION/single/$QT_ARCHIVE
-	fi
+    # 存在しない場合
+    if [ ! -e $QT_ARCHIVE ]; then
+    wget -c  http://download.qt.io/$QT_RELEASE/qt/$QT_MAJOR_VERSION/$QT_VERSION/single/$QT_ARCHIVE
+    fi
 
-	tar xf $QT_ARCHIVE
-	mv $QT_ARCHIVE_DIR $QT_SOURCE_DIR
-	pushd $QT_SOURCE_DIR
+    tar xf $QT_ARCHIVE
+    mv $QT_ARCHIVE_DIR $QT_SOURCE_DIR
+    pushd $QT_SOURCE_DIR
 
-	if [ "$1" == "static" ]; then
-		#static版がcmakeで正常にリンクできない対策のパッチ
-		patch -p1 -i $SCRIPT_DIR/0034-qt-5.3.2-Use-QMAKE_PREFIX_STATICLIB-in-create_cmake-prf.patch
-		patch -p1 -i $SCRIPT_DIR/0035-qt-5.3.2-dont-add-resource-files-to-qmake-libs.patch
-		
-		# Patches so that qt5-static can be used with cmake.
-		patch -p1 -i $SCRIPT_DIR/0036-qt-5.3.2-win32-qt5-static-cmake-link-ws2_32-and--static.patch
-		patch -p1 -i $SCRIPT_DIR/0037-qt-5.4.0-Improve-cmake-plugin-detection-as-not-all-are-suffixed-Plugin.patch
-		patch -p1 -i $SCRIPT_DIR/0038-qt-5.5.0-cmake-Rearrange-STATIC-vs-INTERFACE-targets.patch
-		patch -p1 -i $SCRIPT_DIR/0039-qt-5.4.0-Make-it-possible-to-use-static-builds-of-Qt-with-CMa.patch
-		patch -p1 -i $SCRIPT_DIR/0040-qt-5.4.0-Generate-separated-libraries-in-prl-files-for-CMake.patch
-		patch -p1 -i $SCRIPT_DIR/0041-qt-5.4.0-Fix-mingw-create_cmake-prl-file-has-no-lib-prefix.patch
-		patch -p1 -i $SCRIPT_DIR/0042-qt-5.4.0-static-cmake-also-link-plugins-and-plugin-deps.patch
-		patch -p1 -i $SCRIPT_DIR/0043-qt-5.5.0-static-cmake-regex-QT_INSTALL_LIBS-in-QMAKE_PRL_LIBS_FOR_CMAKE.patch
-	fi
+    if [ "$1" == "static" ]; then
+        #static版がcmakeで正常にリンクできない対策のパッチ
+        patch -p1 -i $SCRIPT_DIR/0034-qt-5.3.2-Use-QMAKE_PREFIX_STATICLIB-in-create_cmake-prf.patch
+        patch -p1 -i $SCRIPT_DIR/0035-qt-5.3.2-dont-add-resource-files-to-qmake-libs.patch
+        
+        # Patches so that qt5-static can be used with cmake.
+        patch -p1 -i $SCRIPT_DIR/0036-qt-5.3.2-win32-qt5-static-cmake-link-ws2_32-and--static.patch
+        patch -p1 -i $SCRIPT_DIR/0037-qt-5.4.0-Improve-cmake-plugin-detection-as-not-all-are-suffixed-Plugin.patch
+        patch -p1 -i $SCRIPT_DIR/0038-qt-5.5.0-cmake-Rearrange-STATIC-vs-INTERFACE-targets.patch
+        patch -p1 -i $SCRIPT_DIR/0039-qt-5.4.0-Make-it-possible-to-use-static-builds-of-Qt-with-CMa.patch
+        patch -p1 -i $SCRIPT_DIR/0040-qt-5.4.0-Generate-separated-libraries-in-prl-files-for-CMake.patch
+        patch -p1 -i $SCRIPT_DIR/0041-qt-5.4.0-Fix-mingw-create_cmake-prl-file-has-no-lib-prefix.patch
+        patch -p1 -i $SCRIPT_DIR/0042-qt-5.4.0-static-cmake-also-link-plugins-and-plugin-deps.patch
+        patch -p1 -i $SCRIPT_DIR/0043-qt-5.5.0-static-cmake-regex-QT_INSTALL_LIBS-in-QMAKE_PRL_LIBS_FOR_CMAKE.patch
+    fi
 
     #共通パッチ
     patch -p1 -i $SCRIPT_DIR/0301-link-evr.patch
     patch -p1 -i $SCRIPT_DIR/0052-qt-5.11-mingw-fix-link-qdoc-with-clang.patch
 
-	#MSYSでビルドが通らない問題への対策パッチ
-	for F in qtbase/src/angle/src/common/gles_common.pri qtdeclarative/features/hlsl_bytecode_header.prf
-	do
-		sed -i -e "s|/nologo |//nologo |g" $F
-		sed -i -e "s|/E |//E |g" $F
-		sed -i -e "s|/T |//T |g" $F
-		sed -i -e "s|/Fh |//Fh |g" $F
-	done
-	sed -i -e "s|#ifdef __MINGW32__|#if 0|g"  qtbase/src/3rdparty/angle/src/libANGLE/renderer/d3d/d3d11/Query11.cpp
+    #MSYSでビルドが通らない問題への対策パッチ
+    for F in qtbase/src/angle/src/common/gles_common.pri qtdeclarative/features/hlsl_bytecode_header.prf
+    do
+        sed -i -e "s|/nologo |//nologo |g" $F
+        sed -i -e "s|/E |//E |g" $F
+        sed -i -e "s|/T |//T |g" $F
+        sed -i -e "s|/Fh |//Fh |g" $F
+    done
+    sed -i -e "s|#ifdef __MINGW32__|#if 0|g"  qtbase/src/3rdparty/angle/src/libANGLE/renderer/d3d/d3d11/Query11.cpp
 
     #32ビット版のdefファイルが間違っているのを修正
     #Qt5.11から該当ファイルをコピー
@@ -78,11 +78,11 @@ else
     cp $SCRIPT_DIR/libEGL* qtbase/src/3rdparty/angle/src/libEGL/
     cp $SCRIPT_DIR/libGLESv2* qtbase/src/3rdparty/angle/src/libGLESv2/
 
-	#64bit環境で生成されるオブジェクトファイルが巨大すぎでビルドが通らない問題へのパッチ
-	sed -i -e "s|QMAKE_CFLAGS			= |QMAKE_CFLAGS			= -Wa,-mbig-obj |g" qtbase/mkspecs/win32-g++/qmake.conf
+    #64bit環境で生成されるオブジェクトファイルが巨大すぎでビルドが通らない問題へのパッチ
+    sed -i -e "s|QMAKE_CFLAGS           = |QMAKE_CFLAGS         = -Wa,-mbig-obj |g" qtbase/mkspecs/win32-g++/qmake.conf
 
-	#プリコンパイル済みヘッダーが巨大すぎでビルドが通らない問題へのパッチ
-	sed -i -e "s| precompile_header||g" qtbase/mkspecs/win32-g++/qmake.conf
+    #プリコンパイル済みヘッダーが巨大すぎでビルドが通らない問題へのパッチ
+    sed -i -e "s| precompile_header||g" qtbase/mkspecs/win32-g++/qmake.conf
 
     popd
 fi
@@ -110,8 +110,8 @@ QT_COMMON_CONF_OPTS+=("-nomake" "tests")
 
 function buildQtShared(){
 if [ -e $PREFIX/bin/qmake.exe -a $((FORCE_INSTALL)) == 0 ]; then
-	echo "Qt5 Shared Libs are already installed."
-	return 0
+    echo "Qt5 Shared Libs are already installed."
+    return 0
 fi
 
 #Qtのソースコードを展開
@@ -142,8 +142,8 @@ rm -rf $QT5_SHARED_BUILD
 
 function buildQtStatic(){
 if [ -e $QT5_STATIC_PREFIX/bin/qmake.exe -a $((FORCE_INSTALL)) == 0 ]; then
-	echo "Qt5 Static Libs are already installed."
-	return 0
+    echo "Qt5 Static Libs are already installed."
+    return 0
 fi
 
 #Qtのソースコードを展開
@@ -188,8 +188,8 @@ rm -rf $QT5_STATIC_BUILD
 
 function buildQtCreator(){
 if [ -e $PREFIX/bin/qtcreator.exe -a $((FORCE_INSTALL)) == 0 ]; then
-	echo "Qt Creator is already installed."
-	return 0
+    echo "Qt Creator is already installed."
+    return 0
 fi
 
 #Qt Creator
@@ -203,17 +203,17 @@ QTC_ARCHIVE=$QTC_SOURCE_DIR.tar.xz
 QTC_RELEASE=official_releases
 wget -c  http://download.qt.io/$QTC_RELEASE/qtcreator/$QTC_MAJOR_VER/$QTC_VER/$QTC_ARCHIVE
 if [ -e $QTC_SOURCE_DIR ]; then
-	# 存在する場合
-	echo "$QTC_SOURCE_DIR already exists."
+    # 存在する場合
+    echo "$QTC_SOURCE_DIR already exists."
 else
-	# 存在しない場合
-	tar xf $QTC_ARCHIVE
+    # 存在しない場合
+    tar xf $QTC_ARCHIVE
 
-	pushd $QTC_SOURCE_DIR
-	#MSYSでビルドが通らない問題へのパッチ
-	patch -p1 < $SCRIPT_DIR/qt-creator-3.5.0-shellquote-declspec-dllexport-for-unix-shell.patch
-	patch -p1 < $SCRIPT_DIR/qt-creator-4.6.2-fix-clang-detect.patch
-	popd
+    pushd $QTC_SOURCE_DIR
+    #MSYSでビルドが通らない問題へのパッチ
+    patch -p1 < $SCRIPT_DIR/qt-creator-3.5.0-shellquote-declspec-dllexport-for-unix-shell.patch
+    patch -p1 < $SCRIPT_DIR/qt-creator-4.6.2-fix-clang-detect.patch
+    popd
 fi
 
 QTCREATOR_BUILD=qt-creator-$BIT
