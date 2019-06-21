@@ -2,7 +2,7 @@
 
 function prerequisite(){
 #必要ライブラリ
-pacman -S --needed --noconfirm \
+pacman "${PACMAN_INSTALL_OPTS[@]}" \
 $MINGW_PACKAGE_PREFIX-ntldd \
 $MINGW_PACKAGE_PREFIX-clang \
 $MINGW_PACKAGE_PREFIX-clang-tools-extra \
