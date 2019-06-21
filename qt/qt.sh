@@ -21,7 +21,7 @@ popd
 function makeQtSourceTree(){
 #Qt
 QT_MAJOR_VERSION=5.12
-QT_MINOR_VERSION=.3
+QT_MINOR_VERSION=.4
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
 QT_ARCHIVE_DIR=qt-everywhere-src-$QT_VERSION
 QT_ARCHIVE=$QT_ARCHIVE_DIR.tar.xz
@@ -71,12 +71,6 @@ else
         sed -i -e "s|/Fh |//Fh |g" $F
     done
     sed -i -e "s|#ifdef __MINGW32__|#if 0|g"  qtbase/src/3rdparty/angle/src/libANGLE/renderer/d3d/d3d11/Query11.cpp
-
-    #32ビット版のdefファイルが間違っているのを修正
-    #Qt5.11から該当ファイルをコピー
-    #https://bugreports.qt.io/browse/QTBUG-76087
-    cp $SCRIPT_DIR/libEGL* qtbase/src/3rdparty/angle/src/libEGL/
-    cp $SCRIPT_DIR/libGLESv2* qtbase/src/3rdparty/angle/src/libGLESv2/
 
     #64bit環境で生成されるオブジェクトファイルが巨大すぎでビルドが通らない問題へのパッチ
     sed -i -e "s|QMAKE_CFLAGS           = |QMAKE_CFLAGS         = -Wa,-mbig-obj |g" qtbase/mkspecs/win32-g++/qmake.conf
