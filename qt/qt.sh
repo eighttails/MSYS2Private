@@ -213,10 +213,10 @@ else
     popd
 fi
 
-QTCREATOR_BUILD=qt-creator-$BIT
-rm -rf $QTCREATOR_BUILD
-mkdir $QTCREATOR_BUILD
-pushd $QTCREATOR_BUILD
+QTC_BUILD=qt-creator-$BIT
+rm -rf $QTC_BUILD
+mkdir $QTC_BUILD
+pushd $QTC_BUILD
 
 $PREFIX/bin/qmake CONFIG-=precompile_header CONFIG+="release silent" QTC_PREFIX="$(cygpath -am $PREFIX)" ../$QTC_SOURCE_DIR/qtcreator.pro
 exitOnError
@@ -232,6 +232,49 @@ rm -rf $QTCREATOR_BUILD
 }
 
 
+function buildQtInstallerFramework(){
+if [ -e $QT5_STATIC_PREFIX/bin/binarycreator.exe -a $((FORCE_INSTALL)) == 0 ]; then
+    echo "Qt Installer Framework is already installed."
+    return 0
+fi
+
+#Qt Installer Framework
+cd ~/extlib
+QTIFW_MAJOR_VER=3.1
+QTIFW_MINOR_VER=.1
+QTIFW_VER=$QTIFW_MAJOR_VER$QTIFW_MINOR_VER
+QTIFW_SOURCE_DIR=qt-installer-framework-opensource-src-$QTIFW_VER
+QTIFW_ARCHIVE=$QTIFW_SOURCE_DIR.tar.gz
+#QTIFW_RELEASE=development_releases
+QTIFW_RELEASE=official_releases
+wget -c  http://download.qt.io/$QTIFW_RELEASE/qt-installer-framework/$QTIFW_VER/$QTIFW_ARCHIVE
+if [ -e $QTIFW_SOURCE_DIR ]; then
+    # 存在する場合
+    echo "$QTIFW_SOURCE_DIR already exists."
+else
+    # 存在しない場合
+    mkdir $QTIFW_SOURCE_DIR
+    tar xf $QTIFW_ARCHIVE -C $QTIFW_SOURCE_DIR
+    pushd $QTIFW_SOURCE_DIR
+    patch -p1 -i $SCRIPT_DIR/qt-ifw-maintenancetool.patch
+    exitOnError
+    popd
+fi
+
+QTIFW_BUILD=qt-installer-framework-$BIT
+rm -rf $QTIFW_BUILD
+mkdir $QTIFW_BUILD
+pushd $QTIFW_BUILD
+
+$QT5_STATIC_PREFIX/bin/qmake CONFIG-=precompile_header CONFIG+="release silent no_testcase_installs" ../$QTIFW_SOURCE_DIR/installerfw.pro
+exitOnError
+
+makeParallel && make install
+exitOnError
+
+popd
+rm -rf $QTIFW_BUILD
+}
 
 #----------------------------------------------------
 SCRIPT_DIR=$(dirname $(readlink -f ${BASH_SOURCE:-$0}))
@@ -269,3 +312,6 @@ exitOnError
 buildQtCreator
 exitOnError
 
+#QtInstallerFrameworkをビルド
+buildQtInstallerFramework
+exitOnError
