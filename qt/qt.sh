@@ -234,6 +234,50 @@ popd
 rm -rf $QTCREATOR_BUILD
 }
 
+function buildQtInstallerFramework(){
+if [ -e $QT5_STATIC_PREFIX/bin/archivegen.exe -a $((FORCE_INSTALL)) == 0 ]; then
+	echo "Qt Installer Framework is already installed."
+	return 0
+fi
+
+#Qt Installer Framework
+cd ~/extlib
+QTI_MAJOR_VER=3.2
+QTI_MINOR_VER=.0
+QTI_VER=$QTI_MAJOR_VER$QTI_MINOR_VER
+QTI_SOURCE_DIR=qt-installer-framework-opensource-src-$QTI_VER
+QTI_ARCHIVE=$QTI_SOURCE_DIR.tar.gz
+#QTI_RELEASE=development_releases
+QTI_RELEASE=official_releases
+wget -c https://download.qt.io/official_releases/qt-installer-framework/$QTI_VER/$QTI_ARCHIVE
+if [ -e $QTI_SOURCE_DIR ]; then
+	# 存在する場合
+	echo "$QTI_SOURCE_DIR already exists."
+else
+	# 存在しない場合
+    mkdir $QTI_SOURCE_DIR
+	tar xf $QTI_ARCHIVE -C $QTI_SOURCE_DIR
+    
+    #リソースファイルのマクロ展開に失敗する対策
+    pushd $QTI_SOURCE_DIR/src/sdk
+    sed -i -e "s|IFW_VERSION_STR_WIN32|\"$QTI_VER\\\\0\"|" installerbase.rc
+    popd
+fi
+
+QTINSTALLERFW_BUILD=qt-installer-fw-$BIT
+rm -rf $QTINSTALLERFW_BUILD
+mkdir $QTINSTALLERFW_BUILD
+pushd $QTINSTALLERFW_BUILD
+
+$QT5_STATIC_PREFIX/bin/qmake CONFIG+="release silent" CONFIG-=precompile_header ../$QTI_SOURCE_DIR/installerfw.pro
+exitOnError
+
+makeParallel && make install
+exitOnError
+popd
+rm -rf $QTINSTALLERFW_BUILD
+}
+
 
 
 #----------------------------------------------------
@@ -270,5 +314,9 @@ exitOnError
 
 #QtCreatorをビルド
 buildQtCreator
+exitOnError
+
+#Qt installer frameworkをビルド
+buildQtInstallerFramework
 exitOnError
 
