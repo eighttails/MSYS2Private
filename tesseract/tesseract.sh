@@ -35,6 +35,10 @@ TESSERACT_ARCHIVE=tesseract-$TESSERACT_TAG.tar.gz
 TESSERACT_SRC_DIR=tesseract-$TESSERACT_VERSION
 TESSERACT_BUILD_DIR=$TESSERACT_SRC_DIR-$BIT
 
+if [ "$TESSERACT_VERSION" == "master" ]; then
+rm $TESSERACT_ARCHIVE 2> /dev/null
+fi
+
 if [ ! -e $TESSERACT_ARCHIVE ]; then
 wget -c https://github.com/tesseract-ocr/tesseract/archive/$TESSERACT_TAG/$TESSERACT_ARCHIVE
 fi
