@@ -30,7 +30,7 @@ echo "tesseract is already installed."
 exit 0
 fi
 
-TESSERACT_VERSION=master
+TESSERACT_VERSION=5.0.0-alpha-20210401
 TESSERACT_TAG=$TESSERACT_VERSION
 TESSERACT_ARCHIVE=tesseract-$TESSERACT_TAG.tar.gz
 TESSERACT_SRC_DIR=tesseract-$TESSERACT_VERSION
@@ -39,6 +39,7 @@ TESSERACT_BUILD_DIR=$TESSERACT_SRC_DIR-$BIT
 if [ "$TESSERACT_VERSION" == "master" ]; then
 rm $TESSERACT_ARCHIVE 2> /dev/null
 fi
+
 
 if [ ! -e $TESSERACT_ARCHIVE ]; then
 wget -c https://github.com/tesseract-ocr/tesseract/archive/$TESSERACT_TAG/$TESSERACT_ARCHIVE
@@ -58,15 +59,26 @@ fi
 ./autogen.sh
 exitOnError
 
+if [ "$TESSERACT_DEBUG" != "" ]; then
+    echo Building Tessract with DEBUG flags.
+    DEBUG_FLAGS="--enable-debug "
+fi
 ./configure \
+$DEBUG_FLAGS \
 --build=$MINGW_CHOST \
 --host=$MINGW_CHOST \
 --target=$MINGW_CHOST \
 --prefix=$PREFIX \
 --with-extra-includes=$PREFIX/include \
---with-extra-libraries=$PREFIX/lib 
+--with-extra-libraries=$PREFIX/lib
 
 exitOnError
+
+if [ "$TESSERACT_DEBUG" != "" ]; then
+    #O0以外でビルドされるとデバッグが困難な局面があるため修正
+    sed -i -e 's/Og/O0/g' Makefile
+    sed -i -e 's/O2/O0/g' Makefile
+fi
 
 #WindowsでScrollView.jarのビルドが通らないのを修正
 #sed -i -e "s|piccolo2d-core-3.0.jar:piccolo2d-extras-3.0.jar|'piccolo2d-core-3.0.jar;piccolo2d-extras-3.0.jar'|" java/Makefile
