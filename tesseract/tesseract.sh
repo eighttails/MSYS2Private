@@ -74,6 +74,7 @@ fi
 ./configure \
 $DEBUG_FLAGS \
 --disable-legacy \
+--enable-float32 \
 --build=$MINGW_CHOST \
 --host=$MINGW_CHOST \
 --target=$MINGW_CHOST \
