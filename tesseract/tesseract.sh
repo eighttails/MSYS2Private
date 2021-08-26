@@ -57,9 +57,6 @@ else
     pushd $TESSERACT_BUILD_DIR
 fi
 
-#asciidocが動かない問題への暫定対応
-sed -i -e 's/AM_CONDITIONAL(\[ASCIIDOC\], true)/AM_CONDITIONAL([ASCIIDOC], false)/' configure.ac
-
 if [ -e Makefile ]; then
 make clean
 fi
