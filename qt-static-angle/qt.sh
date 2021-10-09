@@ -22,8 +22,8 @@ popd
 
 function makeQtSourceTree(){
 #Qt
-QT_MAJOR_VERSION=5.12
-QT_MINOR_VERSION=.6
+QT_MAJOR_VERSION=5.15
+QT_MINOR_VERSION=.2
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
 QT_ARCHIVE_DIR=qt-everywhere-src-$QT_VERSION
 QT_ARCHIVE=$QT_ARCHIVE_DIR.tar.xz
@@ -44,31 +44,12 @@ else
     mv $QT_ARCHIVE_DIR $QT_SOURCE_DIR
     pushd $QT_SOURCE_DIR
 
-    #共通パッチ
-    patch -p1 -i $SCRIPT_DIR/0301-link-evr.patch
-    patch -p1 -i $SCRIPT_DIR/0052-qt-5.11-mingw-fix-link-qdoc-with-clang.patch
-    patch -p1 -i $SCRIPT_DIR/0059-different-libs-search-order-for-static-and-shared.patch
-
+    #qdocのビルドが通らないので暫定パッチ
     if [ "$1" == "static" ]; then
-        #static版がcmakeで正常にリンクできない対策のパッチ
-        patch -p1 -i $SCRIPT_DIR/0034-qt-5.3.2-Use-QMAKE_PREFIX_STATICLIB-in-create_cmake-prf.patch
-        patch -p1 -i $SCRIPT_DIR/0035-qt-5.3.2-dont-add-resource-files-to-qmake-libs.patch
-        
-        # Patches so that qt5-static can be used with cmake.
-        patch -p1 -i $SCRIPT_DIR/0036-qt-5.3.2-win32-qt5-static-cmake-link-ws2_32-and--static.patch
-        patch -p1 -i $SCRIPT_DIR/0037-qt-5.4.0-Improve-cmake-plugin-detection-as-not-all-are-suffixed-Plugin.patch
-        patch -p1 -i $SCRIPT_DIR/0038-qt-5.5.0-cmake-Rearrange-STATIC-vs-INTERFACE-targets.patch
-        patch -p1 -i $SCRIPT_DIR/0039-qt-5.4.0-Make-it-possible-to-use-static-builds-of-Qt-with-CMa.patch
-        patch -p1 -i $SCRIPT_DIR/0040-qt-5.4.0-Generate-separated-libraries-in-prl-files-for-CMake.patch
-        patch -p1 -i $SCRIPT_DIR/0041-qt-5.4.0-Fix-mingw-create_cmake-prl-file-has-no-lib-prefix.patch
-        patch -p1 -i $SCRIPT_DIR/0042-qt-5.4.0-static-cmake-also-link-plugins-and-plugin-deps.patch
-        patch -p1 -i $SCRIPT_DIR/0043-qt-5.5.0-static-cmake-regex-QT_INSTALL_LIBS-in-QMAKE_PRL_LIBS_FOR_CMAKE.patch
-
-        #qdocのビルドが通らないので暫定パッチ
         patch -p1 -i $SCRIPT_DIR/0302-ugly-hack-disable-qdoc-build.patch
     fi
 
-    #MSYSでビルドが通らない問題への対策パッチ
+    #MSYSで引数のパス変換が勝手に走ってビルドが通らない問題への対策パッチ
     for F in qtbase/src/angle/src/common/gles_common.pri qtdeclarative/features/hlsl_bytecode_header.prf
     do
         sed -i -e "s|/nologo |//nologo |g" $F
@@ -76,6 +57,7 @@ else
         sed -i -e "s|/T |//T |g" $F
         sed -i -e "s|/Fh |//Fh |g" $F
     done
+    sed -i -e "s|load(qt_tool)|msysargconv.name = MSYS2_ARG_CONV_EXCL\nmsysargconv.value = *\nQT_TOOL_ENV += msysargconv\nload(qt_tool)|" qtdeclarative/src/qmltyperegistrar/qmltyperegistrar.pro
 
     #64bit環境で生成されるオブジェクトファイルが巨大すぎでビルドが通らない問題へのパッチ
     sed -i -e "s|QMAKE_CFLAGS           = |QMAKE_CFLAGS         = -Wa,-mbig-obj |g" qtbase/mkspecs/win32-g++/qmake.conf
@@ -92,18 +74,18 @@ QT_COMMON_CONF_OPTS+=("-opensource")
 QT_COMMON_CONF_OPTS+=("-confirm-license")
 QT_COMMON_CONF_OPTS+=("-silent")
 QT_COMMON_CONF_OPTS+=("-platform" "win32-g++")
-QT_COMMON_CONF_OPTS+=("-release")
 QT_COMMON_CONF_OPTS+=("-optimize-size")
 QT_COMMON_CONF_OPTS+=("-pkg-config")
 QT_COMMON_CONF_OPTS+=("-no-pch")
 QT_COMMON_CONF_OPTS+=("QMAKE_CXXFLAGS+=-Wno-deprecated-declarations")
 QT_COMMON_CONF_OPTS+=("-no-direct2d")
+QT_COMMON_CONF_OPTS+=("-no-wmf")
+QT_COMMON_CONF_OPTS+=("-no-mng")
 QT_COMMON_CONF_OPTS+=("-no-fontconfig")
 QT_COMMON_CONF_OPTS+=("-qt-zlib")
 QT_COMMON_CONF_OPTS+=("-qt-libjpeg")
 QT_COMMON_CONF_OPTS+=("-qt-libpng")
 QT_COMMON_CONF_OPTS+=("-qt-tiff")
-QT_COMMON_CONF_OPTS+=("-no-mng")
 QT_COMMON_CONF_OPTS+=("-no-jasper")
 QT_COMMON_CONF_OPTS+=("-qt-webp")
 QT_COMMON_CONF_OPTS+=("-qt-freetype")
@@ -111,7 +93,7 @@ QT_COMMON_CONF_OPTS+=("-qt-pcre")
 QT_COMMON_CONF_OPTS+=("-qt-harfbuzz")
 QT_COMMON_CONF_OPTS+=("-nomake" "tests")
 QT_COMMON_CONF_OPTS+=("-no-feature-openal")
-QT_COMMON_CONF_OPTS+=("-skip" "qtdeclarative")
+QT_COMMON_CONF_OPTS+=("-no-feature-d3d12")
 }
 
 
@@ -151,10 +133,6 @@ exitOnError
 makeParallel && make install
 exitOnError
 
-#MSYS2のlibtiffはliblzmaに依存しているためリンクを追加する
-sed -i -e "s|-ltiff|-ltiff -llzma|g" $QT5_STATIC_PREFIX/plugins/imageformats/qtiff.prl
-sed -i -e "s|-ltiff|-ltiff -llzma|g" $QT5_STATIC_PREFIX/plugins/imageformats/qtiffd.prl
-
 popd
 
 unset QDOC_SKIP_BUILD
@@ -169,9 +147,12 @@ SCRIPT_DIR=$(dirname $(readlink -f ${BASH_SOURCE:-$0}))
 source $SCRIPT_DIR/../common/common.sh
 commonSetup
 
-export WindowsSdkVerBinPath="C:/Program Files (x86)/Windows Kits/10/bin/10.0.18362.0"
+#ANGLEをビルドするために必要なfxc.exeにパスを通す
+export WindowsSdkVerBinPath=$(cygpath -am "C:/Program Files (x86)/Windows Kits/10/bin/10.0.18362.0")
+export PATH=$(cygpath "$WindowsSdkVerBinPath/$ARCH"):$PATH
+
 export PKG_CONFIG="$(cygpath -am $MINGW_PREFIX/bin/pkg-config.exe)"
-export LLVM_INSTALL_DIR=${MINGW_PREFIX}
+export LLVM_INSTALL_DIR=$(cygpath -am ${MINGW_PREFIX})
 
 #Qtのインストール場所
 QT5_STATIC_PREFIX=$PREFIX/qt5-static-angle
