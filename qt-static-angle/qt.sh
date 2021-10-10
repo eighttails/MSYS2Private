@@ -148,7 +148,7 @@ source $SCRIPT_DIR/../common/common.sh
 commonSetup
 
 #ANGLEをビルドするために必要なfxc.exeにパスを通す
-export WindowsSdkVerBinPath=$(cygpath -am "C:/Program Files (x86)/Windows Kits/10/bin/10.0.18362.0")
+export WindowsSdkVerBinPath=$(cygpath -am "C:/Program Files (x86)/Windows Kits/10/bin/10.0.22000.0")
 export PATH=$(cygpath "$WindowsSdkVerBinPath/$ARCH"):$PATH
 
 export PKG_CONFIG="$(cygpath -am $MINGW_PREFIX/bin/pkg-config.exe)"
