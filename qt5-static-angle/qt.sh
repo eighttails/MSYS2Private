@@ -22,31 +22,37 @@ popd
 
 function makeQtSourceTree(){
 #Qt
-QT_MAJOR_VERSION=5.15
-QT_MINOR_VERSION=.2
-QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
-QT_ARCHIVE_DIR=qt-everywhere-src-$QT_VERSION
-QT_ARCHIVE=$QT_ARCHIVE_DIR.tar.xz
-QT_SOURCE_DIR=qt-src-$QT_VERSION-$1
-#QT_RELEASE=development_releases
-QT_RELEASE=official_releases
+QT_GIT_DIR=kde-qt5-git
+QT_SOURCE_DIR=qt5-src-$1
 
 if [ -e $QT_SOURCE_DIR ]; then
     # 存在する場合
     echo "$QT_SOURCE_DIR already exists."
 else
     # 存在しない場合
-    if [ ! -e $QT_ARCHIVE ]; then
-    wget -c  http://download.qt.io/$QT_RELEASE/qt/$QT_MAJOR_VERSION/$QT_VERSION/single/$QT_ARCHIVE
+    if [ ! -e $QT_GIT_DIR ]; then
+        #KDEリポジトリのパッチ適用済みリポジトリを取得
+        git clone --recurse-submodules -b kde/5.15 https://invent.kde.org/qt/qt/qt5 $QT_GIT_DIR
+        # git clone -b kde/5.15 https://invent.kde.org/qt/qt/qt5 $QT_GIT_DIR
+        # pushd $QT_GIT_DIR
+        # perl init-repository
+        # popd
+    else
+        pushd $QT_GIT_DIR
+        git pull
+        popd
     fi
 
-    tar xf $QT_ARCHIVE
-    mv $QT_ARCHIVE_DIR $QT_SOURCE_DIR
+    # 独自パッチ適用用のワークフォルダにコピー
+    # rsync -a --no-compress --exclude='.git/' $QT_GIT_DIR/ $QT_SOURCE_DIR 
+    cp -r $QT_GIT_DIR $QT_SOURCE_DIR 
     pushd $QT_SOURCE_DIR
+    # rm -rf .git
 
     #qdocのビルドが通らないので暫定パッチ
     if [ "$1" == "static" ]; then
-        patch -p1 -i $SCRIPT_DIR/0302-ugly-hack-disable-qdoc-build.patch
+        patchOnce 1 $SCRIPT_DIR/0302-ugly-hack-disable-qdoc-build.patch
+        patchOnce 1 $SCRIPT_DIR/0100-fix-relocatable-prefix-staticbuild-v2.patch
     fi
 
     #MSYSで引数のパス変換が勝手に走ってビルドが通らない問題への対策パッチ
@@ -65,7 +71,7 @@ else
     #プリコンパイル済みヘッダーが巨大すぎでビルドが通らない問題へのパッチ
     sed -i -e "s| precompile_header||g" qtbase/mkspecs/win32-g++/qmake.conf
 
-    popd
+    popd #QT_SOURCE_DIR
 fi
 
 #共通ビルドオプション
@@ -114,7 +120,7 @@ mkdir $QT5_STATIC_BUILD
 pushd $QT5_STATIC_BUILD
 
 QT_STATIC_CONF_OPTS=()
-QT_STATIC_CONF_OPTS+=("-v")
+QT_STATIC_CONF_OPTS+=("-verbose")
 QT_STATIC_CONF_OPTS+=("-prefix" "$(cygpath -am $QT5_STATIC_PREFIX)")
 QT_STATIC_CONF_OPTS+=("-angle")
 QT_STATIC_CONF_OPTS+=("-static")
@@ -127,7 +133,7 @@ QT_STATIC_CONF_OPTS+=("-no-dbus")
 export QDOC_SKIP_BUILD=1
 export QDOC_USE_STATIC_LIBCLANG=1
 OPENSSL_LIBS="$(pkg-config --static --libs openssl)" \
-../$QT_SOURCE_DIR/configure "${QT_COMMON_CONF_OPTS[@]}" "${QT_STATIC_CONF_OPTS[@]}" &> ../qt5-static-$BIT-config.status
+../$QT_SOURCE_DIR/configure.bat "${QT_COMMON_CONF_OPTS[@]}" "${QT_STATIC_CONF_OPTS[@]}" &> ../qt5-static-$BIT-config.status
 exitOnError
 
 makeParallel && make install
@@ -153,6 +159,9 @@ export PATH=$(cygpath "$WindowsSdkVerBinPath/$ARCH"):$PATH
 
 export PKG_CONFIG="$(cygpath -am $MINGW_PREFIX/bin/pkg-config.exe)"
 export LLVM_INSTALL_DIR=$(cygpath -am ${MINGW_PREFIX})
+
+# https://github.com/msys2/MSYS2-packages/issues/2282
+export MSYS2_ARG_CONV_EXCL='--foreign-types='
 
 #Qtのインストール場所
 QT5_STATIC_PREFIX=$PREFIX/qt5-static-angle
