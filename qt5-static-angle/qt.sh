@@ -50,13 +50,6 @@ else
     fi
 
     #MSYSで引数のパス変換が勝手に走ってビルドが通らない問題への対策パッチ
-    for F in qtbase/src/angle/src/common/gles_common.pri qtdeclarative/features/hlsl_bytecode_header.prf
-    do
-        sed -i -e "s|/nologo |//nologo |g" $F
-        sed -i -e "s|/E |//E |g" $F
-        sed -i -e "s|/T |//T |g" $F
-        sed -i -e "s|/Fh |//Fh |g" $F
-    done
     sed -i -e "s|load(qt_tool)|msysargconv.name = MSYS2_ARG_CONV_EXCL\nmsysargconv.value = *\nQT_TOOL_ENV += msysargconv\nload(qt_tool)|" qtdeclarative/src/qmltyperegistrar/qmltyperegistrar.pro
 
     #64bit環境で生成されるオブジェクトファイルが巨大すぎでビルドが通らない問題へのパッチ
@@ -159,7 +152,7 @@ export WindowsSdkVerBinPath=$(cygpath -am "C:/Program Files (x86)/Windows Kits/1
 export PATH=$(cygpath "$WindowsSdkVerBinPath/$ARCH"):$PATH
 
 export PKG_CONFIG="$(cygpath -am $MINGW_PREFIX/bin/pkg-config.exe)"
-export LLVM_INSTALL_DIR=$(cygpath -am ${MINGW_PREFIX})
+export LLVM_INSTALL_DIR=$(cygpath -am $MINGW_PREFIX)
 
 #Qtのインストール場所
 QT5_STATIC_PREFIX=$PREFIX/qt5-static-angle
