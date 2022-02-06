@@ -160,7 +160,6 @@ cmake \
     -DFEATURE_static_runtime=ON \
     -DFEATURE_relocatable=ON \
     -DFEATURE_openssl_linked=ON \
-    -DINPUT_opengl=dynamic \
     -DINPUT_openssl=linked \
     -DINPUT_dbus=linked \
     -DINPUT_mng=yes \
@@ -185,7 +184,8 @@ cmake \
     -DFEATURE_system_webp=OFF \
     -DFEATURE_system_zlib=OFF \
     -DFEATURE_opengl=ON \
-    -DFEATURE_opengl_desktop=ON \
+    -DFEATURE_opengl_dynamic=ON \
+    -DFEATURE_opengl_desktop=OFF \
     -DFEATURE_egl=OFF \
     -DFEATURE_gstreamer=OFF \
     -DFEATURE_icu=OFF \
@@ -240,15 +240,11 @@ commonSetup
 #必要ライブラリ
 prerequisite
 
-#ANGLEをビルドするために必要なfxc.exeにパスを通す
-export WindowsSdkVerBinPath=$(cygpath -am "C:/Program Files (x86)/Windows Kits/10/bin/10.0.22000.0")
-export PATH=$(cygpath "$WindowsSdkVerBinPath/$ARCH"):$PATH
-
 export PKG_CONFIG="$(cygpath -am $MINGW_PREFIX/bin/pkg-config.exe)"
 export LLVM_INSTALL_DIR=$(cygpath -am $MINGW_PREFIX)
 
 #Qtのインストール場所
-QT6_STATIC_PREFIX=$PREFIX/qt6-static-angle
+QT6_STATIC_PREFIX=$PREFIX/qt6-static-private
 
 cd $EXTLIB
 
