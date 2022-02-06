@@ -9,19 +9,12 @@ $MINGW_PACKAGE_PREFIX-cc \
 $MINGW_PACKAGE_PREFIX-clang \
 $MINGW_PACKAGE_PREFIX-clang-tools-extra \
 $MINGW_PACKAGE_PREFIX-dbus \
-$MINGW_PACKAGE_PREFIX-freetype \
 $MINGW_PACKAGE_PREFIX-gcc-libs \
-$MINGW_PACKAGE_PREFIX-libjpeg-turbo \
-$MINGW_PACKAGE_PREFIX-libmng \
-$MINGW_PACKAGE_PREFIX-libpng \
-$MINGW_PACKAGE_PREFIX-libtiff \
-$MINGW_PACKAGE_PREFIX-libwebp \
 $MINGW_PACKAGE_PREFIX-mlir \
 $MINGW_PACKAGE_PREFIX-ninja \
 $MINGW_PACKAGE_PREFIX-ntldd \
 $MINGW_PACKAGE_PREFIX-openssl \
 $MINGW_PACKAGE_PREFIX-pcre2 \
-$MINGW_PACKAGE_PREFIX-perl \
 $MINGW_PACKAGE_PREFIX-pkgconf \
 $MINGW_PACKAGE_PREFIX-polly \
 $MINGW_PACKAGE_PREFIX-qtbinpatcher \
@@ -177,17 +170,20 @@ cmake \
     -DINPUT_quick3d_assimp=qt \
     -DFEATURE_system_assimp=OFF \
     -DFEATURE_system_doubleconversion=OFF \
-    -DFEATURE_system_freetype=ON \
+    -DFEATURE_system_freetype=OFF \
     -DFEATURE_system_harfbuzz=OFF \
     -DFEATURE_hunspell=OFF \
     -DFEATURE_system_hunspell=OFF \
-    -DFEATURE_system_jpeg=ON \
-    -DFEATURE_system_pcre2=ON \
-    -DFEATURE_system_png=ON \
+    -DFEATURE_mng=OFF \
+    -DFEATURE_jasper=OFF \
+    -DFEATURE_system_jpeg=OFF \
+    -DFEATURE_system_pcre2=OFF \
+    -DFEATURE_system_mng=OFF \
+    -DFEATURE_system_png=OFF \
     -DFEATURE_system_sqlite=OFF \
-    -DFEATURE_system_tiff=ON \
-    -DFEATURE_system_webp=ON \
-    -DFEATURE_system_zlib=ON \
+    -DFEATURE_system_tiff=OFF \
+    -DFEATURE_system_webp=OFF \
+    -DFEATURE_system_zlib=OFF \
     -DFEATURE_opengl=ON \
     -DFEATURE_opengl_desktop=ON \
     -DFEATURE_egl=OFF \
@@ -219,7 +215,7 @@ cmake \
     -DLIBBROTLIENC_DEPENDENCIES="-lbrotlicommon" \
     -DLIBBROTLICOMMON_DEPENDENCIES="" \
     -DDBUS1_DEPENDENCIES="-lws2_32;-liphlpapi;-ldbghelp" \
-    $(cygpath -aw ../$QT_SOURCE_DIR)
+    $(cygpath -am ../$QT_SOURCE_DIR)
 
 export PATH=$PWD/bin:$PATH
 
