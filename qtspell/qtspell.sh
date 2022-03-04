@@ -32,7 +32,6 @@ pushd $QTSPELL_BUILD_DIR
 
 mkdir build
 pushd build
-CMAKE_PREFIX_PATH=$PREFIX/qt6-shared:$CMAKE_PREFIX_PATH \
 cmake .. \
 -G"MSYS Makefiles" \
 -DCMAKE_INSTALL_PREFIX=$PREFIX \

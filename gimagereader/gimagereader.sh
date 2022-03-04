@@ -5,6 +5,8 @@ function prerequisite(){
 if [ $((NO_DEPENDENCY)) == 0 ]; then
 $SCRIPT_DIR/../qtspell/qtspell.sh
 exitOnError
+$SCRIPT_DIR/../quazip/quazip.sh
+exitOnError
 $SCRIPT_DIR/../twaindsm/twaindsm.sh
 exitOnError
 $SCRIPT_DIR/../tesseract/tesseract.sh
@@ -15,7 +17,6 @@ fi
 pacman "${PACMAN_INSTALL_OPTS[@]}" \
 $MINGW_PACKAGE_PREFIX-qt6-base \
 $MINGW_PACKAGE_PREFIX-poppler-qt6 \
-$MINGW_PACKAGE_PREFIX-quazip \
 $MINGW_PACKAGE_PREFIX-djvulibre \
 $MINGW_PACKAGE_PREFIX-podofo \
 $MINGW_PACKAGE_PREFIX-dlfcn \
@@ -34,7 +35,8 @@ echo "gImageReader is already installed."
 exit 0
 fi
 
-    GIMAGEREADER_VERSION=460c84cee09ba2380e4b082e5da963a6abe58534 #3.4.0+バグ修正
+    # GIMAGEREADER_VERSION=460c84cee09ba2380e4b082e5da963a6abe58534 #3.4.0+バグ修正
+    GIMAGEREADER_VERSION=master
 if [ "$GIMAGEREADER_GIT" != "" ]; then
     GIMAGEREADER_SRC_DIR=gImageReader-git
     git clone https://github.com/manisandro/gImageReader.git $GIMAGEREADER_SRC_DIR 2> /dev/null
@@ -77,7 +79,6 @@ else
     BUILD_TYPE=Release
 fi
 
-CMAKE_PREFIX_PATH=$PREFIX/qt6-shared:$CMAKE_PREFIX_PATH \
 cmake .. \
 -G"MSYS Makefiles" \
 -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
