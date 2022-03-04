@@ -13,8 +13,8 @@ fi
 
 #必要ライブラリ
 pacman "${PACMAN_INSTALL_OPTS[@]}" \
-$MINGW_PACKAGE_PREFIX-qt5 \
-$MINGW_PACKAGE_PREFIX-poppler \
+$MINGW_PACKAGE_PREFIX-qt6-base \
+$MINGW_PACKAGE_PREFIX-poppler-qt6 \
 $MINGW_PACKAGE_PREFIX-quazip \
 $MINGW_PACKAGE_PREFIX-djvulibre \
 $MINGW_PACKAGE_PREFIX-podofo \
@@ -29,7 +29,7 @@ if [ "$GIMAGEREADER_PREFIX" == "" ]; then
 GIMAGEREADER_PREFIX=$PREFIX
 fi
 
-if [ -e $GIMAGEREADER_PREFIX/bin/gImageReader-qt5 -a $((FORCE_INSTALL)) == 0 ]; then
+if [ -e $GIMAGEREADER_PREFIX/bin/gImageReader-qt6 -a $((FORCE_INSTALL)) == 0 ]; then
 echo "gImageReader is already installed."
 exit 0
 fi
@@ -77,14 +77,14 @@ else
     BUILD_TYPE=Release
 fi
 
-CMAKE_PREFIX_PATH=$PREFIX/qt5-shared:$CMAKE_PREFIX_PATH \
+CMAKE_PREFIX_PATH=$PREFIX/qt6-shared:$CMAKE_PREFIX_PATH \
 cmake .. \
 -G"MSYS Makefiles" \
 -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
 -DCMAKE_INSTALL_PREFIX=$GIMAGEREADER_PREFIX \
 -DCMAKE_CXX_FLAGS="-I$PREFIX/include" \
 -DCMAKE_VERBOSE_MAKEFILE:BOOL=FALSE \
--DINTERFACE_TYPE=qt5
+-DINTERFACE_TYPE=qt6
 
 makeParallel && make install
 exitOnError
