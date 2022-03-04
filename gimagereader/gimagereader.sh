@@ -35,8 +35,7 @@ echo "gImageReader is already installed."
 exit 0
 fi
 
-    # GIMAGEREADER_VERSION=460c84cee09ba2380e4b082e5da963a6abe58534 #3.4.0+バグ修正
-    GIMAGEREADER_VERSION=master
+    GIMAGEREADER_VERSION=b0b4f286d502d3cb09342df1eee9ab4c82c5b91a #3.4.0+バグ修正
 if [ "$GIMAGEREADER_GIT" != "" ]; then
     GIMAGEREADER_SRC_DIR=gImageReader-git
     git clone https://github.com/manisandro/gImageReader.git $GIMAGEREADER_SRC_DIR 2> /dev/null
