@@ -52,11 +52,12 @@ apply_patch_with_msg() {
   done
 }
 
-function makeQtSourceTree(){
-#Qt
 QT_MAJOR_VERSION=6.2
 QT_MINOR_VERSION=.1
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
+
+function makeQtSourceTree(){
+#Qt
 QT_ARCHIVE_DIR=qt-everywhere-src-$QT_VERSION
 QT_ARCHIVE=$QT_ARCHIVE_DIR.tar.xz
 QT_SOURCE_DIR=qt6-src-$1
