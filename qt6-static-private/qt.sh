@@ -95,8 +95,10 @@ else
     cd qtshadertools
     apply_patch_with_msg \
         016-fix-building-shadertools-with-gcc-13.patch
-
     cd ..
+
+    # gcc13用暫定パッチ
+    sed -i s/stdint.h/cstdint/g qt3d/src/3rdparty/assimp/src/code/AssetLib/FBX/FBXBinaryTokenizer.cpp
 
     local _ARCH_TUNE=
     case ${MINGW_CHOST} in
@@ -142,6 +144,7 @@ cmake \
     -G "Ninja" \
     -DCMAKE_BUILD_TYPE=Release \
     -DFEATURE_optimize_size=ON \
+    -DBUILD_WITH_PCH=OFF \
     -DCMAKE_FIND_LIBRARY_SUFFIXES_OVERRIDE=".a;.dll.a" \
     -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -static -static-libgcc -static-libstdc++" \
     -DBUILD_SHARED_LIBS=OFF \
