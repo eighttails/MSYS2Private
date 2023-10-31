@@ -5,8 +5,6 @@ function prerequisite(){
 if [ $((NO_DEPENDENCY)) == 0 ]; then
 $SCRIPT_DIR/../qtspell/qtspell.sh
 exitOnError
-$SCRIPT_DIR/../quazip/quazip.sh
-exitOnError
 $SCRIPT_DIR/../twaindsm/twaindsm.sh
 exitOnError
 fi
@@ -15,6 +13,7 @@ fi
 pacman "${PACMAN_INSTALL_OPTS[@]}" \
 $MINGW_PACKAGE_PREFIX-qt6-base \
 $MINGW_PACKAGE_PREFIX-poppler-qt6 \
+$MINGW_PACKAGE_PREFIX-quazip-qt6 \
 $MINGW_PACKAGE_PREFIX-djvulibre \
 $MINGW_PACKAGE_PREFIX-podofo \
 $MINGW_PACKAGE_PREFIX-dlfcn \
