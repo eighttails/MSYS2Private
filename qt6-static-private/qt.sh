@@ -52,11 +52,12 @@ apply_patch_with_msg() {
   do
     echo "Applying ${_patch}"
     patch -Nbp1 -i "${SCRIPT_DIR}/${_patch}"
+    exitOnError
   done
 }
 
 QT_MAJOR_VERSION=6.8
-QT_MINOR_VERSION=.0
+QT_MINOR_VERSION=.1
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
 
 function makeQtSourceTree(){
@@ -77,7 +78,7 @@ else
   wget -c  http://download.qt.io/$QT_RELEASE/qt/$QT_MAJOR_VERSION/$QT_VERSION/single/$QT_ARCHIVE
   fi
 
-  tar xf $QT_ARCHIVE
+  pv $QT_ARCHIVE | tar -xJ
   mv $QT_ARCHIVE_DIR $QT_SOURCE_DIR
   pushd $QT_SOURCE_DIR
 
