@@ -140,8 +140,8 @@ pushd $QT6_STATIC_BUILD
     -Wno-dev \
     --log-level=STATUS \
     -G "Ninja" \
-    -DCMAKE_BUILD_TYPE=MinSizeRel \
-    -DFEATURE_optimize_size=ON \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DFEATURE_optimize_size=OFF \
     -DBUILD_WITH_PCH=OFF \
     -DCMAKE_FIND_LIBRARY_SUFFIXES_OVERRIDE=".a" \
     -DBUILD_SHARED_LIBS=OFF \
