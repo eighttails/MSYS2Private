@@ -133,7 +133,7 @@ makeQtSourceTree static
 exitOnError
 
 #static版
-QT6_STATIC_BUILD=qt6-static-$MSYSTEM
+QT6_STATIC_BUILD=/c/qt6-static-$MSYSTEM
 rm -rf $QT6_STATIC_BUILD
 mkdir $QT6_STATIC_BUILD
 pushd $QT6_STATIC_BUILD
@@ -211,7 +211,7 @@ pushd $QT6_STATIC_BUILD
     -DOPENSSL_USE_STATIC_LIBS=ON \
     -DZLIB_USE_STATIC_LIBS=ON \
     -DBUILD_qtwebengine=OFF \
-    $(cygpath -am ../$QT_SOURCE_DIR) 
+    $(cygpath -am $EXTLIB/$QT_SOURCE_DIR) 
 
     #カスタマイズポイント
     # -DCMAKE_INSTALL_PREFIX=$(cygpath -am $QT6_STATIC_PREFIX) \
@@ -223,13 +223,13 @@ pushd $QT6_STATIC_BUILD
     # -DFEATURE_opengl_desktop=OFF \
     # -DFEATURE_ffmpeg=OFF \
     # 最後のソースパス↓
-    # $(cygpath -am ../$QT_SOURCE_DIR) 
+    # $(cygpath -am $EXTLIB/$QT_SOURCE_DIR) 
 
 #---------------------------------------------------
 
   export PATH=$PWD/bin:$PATH
 
-cp config.summary ../qt6_config_summary_$MSYSTEM.txt
+cp config.summary $EXTLIB/qt6_config_summary_$MSYSTEM.txt
 
 nice -n19 cmake --build .
 exitOnError
@@ -237,10 +237,8 @@ exitOnError
 cmake --install .
 exitOnError
 
-
 popd
-
-# rm -rf $QT6_STATIC_BUILD
+rm -rf $QT6_STATIC_BUILD
 }
 
 
