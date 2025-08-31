@@ -57,8 +57,8 @@ apply_patch_with_msg() {
   done
 }
 
-QT_MAJOR_VERSION=6.8
-QT_MINOR_VERSION=.3
+QT_MAJOR_VERSION=6.9
+QT_MINOR_VERSION=.2
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
 
 function makeQtSourceTree(){
@@ -100,10 +100,10 @@ else
     014-imageformats-transitive-dependencies.patch \
     015-qt6-windeployqt-fixes.patch
 
-  cd qtquick3d/src/3rdparty/assimp/src
-  apply_patch_with_msg \
-    016-fix-build-on-mingw64.patch
-  cd -
+  # cd qtquick3d/src/3rdparty/assimp/src
+  # apply_patch_with_msg \
+  #   016-fix-build-on-mingw64.patch
+  # cd -
 
   local _ARCH_TUNE
   if [[ ${CARCH} == x86_64 ]]; then
