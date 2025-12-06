@@ -58,8 +58,8 @@ apply_patch_with_msg() {
   done
 }
 
-QT_MAJOR_VERSION=6.9
-QT_MINOR_VERSION=.2
+QT_MAJOR_VERSION=6.10
+QT_MINOR_VERSION=.1
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
 
 function makeQtSourceTree(){
@@ -95,16 +95,11 @@ else
     008-Fix-libjpeg-workaround-for-conflict-with-rpcndr.h.patch \
     009-Fix-transitive-dependencies-of-static-libraries.patch \
     010-Support-finding-static-MariaDB-client-library.patch \
-    011-Fix-crashes-in-rasterization-code-using-setjmp.patch \
     012-Handle-win64-in-dumpcpp-and-MetaObjectGenerator-read.patch \
     013-disable-finding-webp-from-cmake-config-files.patch \
     014-imageformats-transitive-dependencies.patch \
     015-qt6-windeployqt-fixes.patch
 
-  # cd qtquick3d/src/3rdparty/assimp/src
-  # apply_patch_with_msg \
-  #   016-fix-build-on-mingw64.patch
-  # cd -
 
   local _ARCH_TUNE
   if [[ ${CARCH} == x86_64 ]]; then
