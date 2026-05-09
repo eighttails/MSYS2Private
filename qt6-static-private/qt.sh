@@ -67,8 +67,7 @@ apply_patch_with_msg() {
 QT_MAJOR_VERSION=6.11
 QT_MINOR_VERSION=.0
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
-export FFMPEG_VERSION=7.1.4
-export PKG_CONFIG_PATH=$MINGW_PREFIX/local/ffmpeg-private$FFMPEG_VERSION/lib/pkgconfig:$PKG_CONFIG_PATH
+. $SCRIPT_DIR/qt_ffmpeg_config.sh
 
 function makeQtSourceTree(){
 #Qt
