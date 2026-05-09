@@ -67,7 +67,6 @@ apply_patch_with_msg() {
 QT_MAJOR_VERSION=6.11
 QT_MINOR_VERSION=.0
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
-. $SCRIPT_DIR/qt_ffmpeg_config.sh
 
 function makeQtSourceTree(){
 #Qt
@@ -264,6 +263,7 @@ export LLVM_INSTALL_DIR=$(cygpath -am $MINGW_PREFIX)
 
 #Qtのインストール場所
 QT6_STATIC_PREFIX=$PREFIX/qt6-static-private
+. $SCRIPT_DIR/qt_ffmpeg_config.sh
 
 cd $EXTLIB
 
