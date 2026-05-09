@@ -45,9 +45,7 @@ fi
 
 ./configure \
 --target-os=mingw32 \
---prefix=$PREFIX \
---incdir=$PREFIX/include/ffmpeg-private$FFMPEG_VERSION \
---build-suffix=-private$FFMPEG_VERSION \
+--prefix=$PREFIX/ffmpeg-private$FFMPEG_VERSION \
 $DEBUG_FLAGS \
 --disable-shared \
 --enable-static \
@@ -84,6 +82,6 @@ exitOnError
 
 cd $EXTLIB
 
-build 6 1 3; exitOnError
-build 7 1 2; exitOnError
-build 8 0  ; exitOnError
+# build 6 1 5; exitOnError
+# build 7 1 4; exitOnError
+build 8 1 1; exitOnError
