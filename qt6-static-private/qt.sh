@@ -1,6 +1,12 @@
 #!/bin/bash
 
 function prerequisite(){
+#他スクリプト依存関係
+if [ $((NO_DEPENDENCY)) == 0 ]; then
+$SCRIPT_DIR/../ffmpeg/ffmpeg.sh
+exitOnError
+fi
+
 #必要ライブラリ
 pacman "${PACMAN_INSTALL_OPTS[@]}" \
 ${MINGW_PACKAGE_PREFIX}-SDL2 \
@@ -59,8 +65,10 @@ apply_patch_with_msg() {
 }
 
 QT_MAJOR_VERSION=6.11
-QT_MINOR_VERSION=.1
+QT_MINOR_VERSION=.0
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
+export FFMPEG_VERSION=7.1.4
+export PKG_CONFIG_PATH=$MINGW_PREFIX/local/ffmpeg-private$FFMPEG_VERSION/lib/pkgconfig:$PKG_CONFIG_PATH
 
 function makeQtSourceTree(){
 #Qt
@@ -205,7 +213,6 @@ pushd $QT6_STATIC_BUILD
     -DPython_EXECUTABLE=${MINGW_PREFIX}/bin/python \
     -DOPENSSL_USE_STATIC_LIBS=ON \
     -DZLIB_USE_STATIC_LIBS=ON \
-    -DFFMPEG_DIR=${PREFIX}
     -DBUILD_qtwebengine=OFF \
     $(cygpath -am $EXTLIB/$QT_SOURCE_DIR) 
 
@@ -236,6 +243,11 @@ exitOnError
 
 popd
 rm -rf $QT6_STATIC_BUILD
+
+# リンクが通らないのを修正
+for LIBNAME in libavformat libavcodec libswscale libswresample libavutil; do
+sed -i "s|${LIBNAME}\.a|${LIBNAME}|g" $QT6_STATIC_PREFIX/share/qt6/plugins/multimedia/ffmpegmediaplugin.prl
+done
 }
 
 

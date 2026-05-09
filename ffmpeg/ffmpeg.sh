@@ -23,7 +23,7 @@ else
 FFMPEG_VERSION=$MAJOR_VER.$MINOR_VER
 fi
 
-if [ -e $PREFIX/lib/libavcodec-private$FFMPEG_VERSION.a -a $((FORCE_INSTALL)) == 0 ]; then
+if [ -e $PREFIX/ffmpeg-private$FFMPEG_VERSION/lib/libavcodec.a -a $((FORCE_INSTALL)) == 0 ]; then
 echo "FFMpeg $FFMPEG_VERSION is already installed."
 return
 fi
@@ -82,6 +82,6 @@ exitOnError
 
 cd $EXTLIB
 
-# build 6 1 5; exitOnError
-# build 7 1 4; exitOnError
+build 6 1 5; exitOnError
+build 7 1 4; exitOnError
 build 8 1 1; exitOnError
