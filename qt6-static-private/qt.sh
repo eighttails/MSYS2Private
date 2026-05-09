@@ -1,6 +1,12 @@
 #!/bin/bash
 
 function prerequisite(){
+#他スクリプト依存関係
+if [ $((NO_DEPENDENCY)) == 0 ]; then
+$SCRIPT_DIR/../ffmpeg/ffmpeg.sh
+exitOnError
+fi
+
 #必要ライブラリ
 pacman "${PACMAN_INSTALL_OPTS[@]}" \
 ${MINGW_PACKAGE_PREFIX}-SDL2 \
@@ -58,9 +64,11 @@ apply_patch_with_msg() {
   done
 }
 
-QT_MAJOR_VERSION=6.10
-QT_MINOR_VERSION=.2
+QT_MAJOR_VERSION=6.11
+QT_MINOR_VERSION=.0
 QT_VERSION=$QT_MAJOR_VERSION$QT_MINOR_VERSION
+export FFMPEG_VERSION=7.1.4
+export PKG_CONFIG_PATH=$MINGW_PREFIX/local/ffmpeg-private$FFMPEG_VERSION/lib/pkgconfig:$PKG_CONFIG_PATH
 
 function makeQtSourceTree(){
 #Qt
@@ -98,7 +106,8 @@ else
     012-Handle-win64-in-dumpcpp-and-MetaObjectGenerator-read.patch \
     013-disable-finding-webp-from-cmake-config-files.patch \
     014-imageformats-transitive-dependencies.patch \
-    015-qt6-windeployqt-fixes.patch
+    015-qt6-windeployqt-fixes.patch \
+    016-fix-build-with-llvm-22.patch
 
 
   local _ARCH_TUNE
@@ -193,8 +202,6 @@ pushd $QT6_STATIC_BUILD
     -DFEATURE_sql_mysql=OFF \
     -DFEATURE_sql_odbc=OFF \
     -DFEATURE_zstd=OFF \
-    -DFEATURE_wmf=ON \
-    -DFEATURE_ffmpeg=OFF \
     -DQT_BUILD_TESTS=OFF \
     -DQT_BUILD_EXAMPLES=OFF \
     -DOPENSSL_DEPENDENCIES="-lws2_32;-lgdi32;-lcrypt32" \
@@ -215,7 +222,6 @@ pushd $QT6_STATIC_BUILD
     # -DINPUT_jasper=no \
     # -DFEATURE_SYSTEM_*=OFF
     # -DFEATURE_opengl_desktop=OFF \
-    # -DFEATURE_ffmpeg=OFF \
     # 最後のソースパス↓
     # $(cygpath -am $EXTLIB/$QT_SOURCE_DIR) 
 
@@ -237,6 +243,11 @@ exitOnError
 
 popd
 rm -rf $QT6_STATIC_BUILD
+
+# リンクが通らないのを修正
+for LIBNAME in libavformat libavcodec libswscale libswresample libavutil; do
+sed -i "s|${LIBNAME}\.a|${LIBNAME}|g" $QT6_STATIC_PREFIX/share/qt6/plugins/multimedia/ffmpegmediaplugin.prl
+done
 }
 
 
