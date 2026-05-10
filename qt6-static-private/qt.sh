@@ -212,6 +212,7 @@ pushd $QT6_STATIC_BUILD
     -DOPENSSL_USE_STATIC_LIBS=ON \
     -DZLIB_USE_STATIC_LIBS=ON \
     -DBUILD_qtwebengine=OFF \
+    -DFFMPEG_DIR=$FFMPEG_DIR \
     $(cygpath -am $EXTLIB/$QT_SOURCE_DIR) 
 
     #カスタマイズポイント
@@ -220,6 +221,7 @@ pushd $QT6_STATIC_BUILD
     # -DINPUT_jasper=no \
     # -DFEATURE_SYSTEM_*=OFF
     # -DFEATURE_opengl_desktop=OFF \
+    # -DFFMPEG_DIR=$FFMPEG_DIR \
     # 最後のソースパス↓
     # $(cygpath -am $EXTLIB/$QT_SOURCE_DIR) 
 
@@ -231,20 +233,21 @@ cp config.summary $EXTLIB/qt6_config_summary_$MSYSTEM.txt
 
 nice -n19 cmake --build .
 exitOnError
-nice -n19 cmake --build . --target docs
-exitOnError
+# nice -n19 cmake --build . --target docs
+# exitOnError
 
 cmake --install .
 exitOnError
-nice -n19 cmake --build . --target install_docs
-exitOnError
+# nice -n19 cmake --build . --target install_docs
+# exitOnError
 
 popd
 rm -rf $QT6_STATIC_BUILD
 
 # リンクが通らないのを修正
 for LIBNAME in libavformat libavcodec libswscale libswresample libavutil; do
-sed -i "s|${LIBNAME}\.a|${LIBNAME}|g" $QT6_STATIC_PREFIX/share/qt6/plugins/multimedia/ffmpegmediaplugin.prl
+    cp $FFPMEG_DIR/lib/$LIBNAME.a $QT6_STATIC_PREFIX/share/qt6/plugins/multimedia/
+    sed -i "s|$LIBNAME\.a|$$[QT_INSTALL_PLUGINS]/multimedia/$LIBNAME.a|g" $QT6_STATIC_PREFIX/share/qt6/plugins/multimedia/ffmpegmediaplugin.prl
 done
 }
 

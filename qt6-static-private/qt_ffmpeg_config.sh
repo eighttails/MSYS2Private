@@ -1,3 +1,4 @@
 export FFMPEG_VERSION=7.1.4
-export PKG_CONFIG_PATH=$MINGW_PREFIX/local/ffmpeg-private$FFMPEG_VERSION/lib/pkgconfig:$PKG_CONFIG_PATH
+export FFMPEG_DIR=$MINGW_PREFIX/local/ffmpeg-private$FFMPEG_VERSION
+# export PKG_CONFIG_PATH=$FFMPEG_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
 
