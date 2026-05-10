@@ -233,21 +233,21 @@ cp config.summary $EXTLIB/qt6_config_summary_$MSYSTEM.txt
 
 nice -n19 cmake --build .
 exitOnError
-# nice -n19 cmake --build . --target docs
-# exitOnError
+nice -n19 cmake --build . --target docs
+exitOnError
 
 cmake --install .
 exitOnError
-# nice -n19 cmake --build . --target install_docs
-# exitOnError
+nice -n19 cmake --build . --target install_docs
+exitOnError
 
 popd
 rm -rf $QT6_STATIC_BUILD
 
 # リンクが通らないのを修正
 for LIBNAME in libavformat libavcodec libswscale libswresample libavutil; do
-    cp $FFPMEG_DIR/lib/$LIBNAME.a $QT6_STATIC_PREFIX/share/qt6/plugins/multimedia/
-    sed -i "s|$LIBNAME\.a|$$[QT_INSTALL_PLUGINS]/multimedia/$LIBNAME.a|g" $QT6_STATIC_PREFIX/share/qt6/plugins/multimedia/ffmpegmediaplugin.prl
+    cp $FFMPEG_DIR/lib/$LIBNAME.a $QT6_STATIC_PREFIX/share/qt6/plugins/multimedia/
+    sed -i "s|$LIBNAME\.a|\$\$[QT_INSTALL_PLUGINS]/multimedia/$LIBNAME.a|g" $QT6_STATIC_PREFIX/share/qt6/plugins/multimedia/ffmpegmediaplugin.prl
 done
 }
 
